@@ -1,6 +1,5 @@
 const platf_router = require("./config/platf.router.config");
 const cursos_router = require("./config/cursos.router.config");
-const profesor_router = require("./config/profesor.router.config");
 
 const express = require("express");
 const app = express();
@@ -31,9 +30,6 @@ app.use(platf_router);
 
 app.use("/api/cursos", cursos_router);
 
-app.use("/api/profesor", profesor_router);
-
-app.use("/api/materialdidactico", profesor_router);
 app.use((error, req,res,next) => {
     console.error("Error: ", error)
     next();
