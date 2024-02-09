@@ -1,5 +1,5 @@
 //import model
-const [DataTypes, sequelize] = require("../SQL/sql.connection.platvirt");
+//const [sequelize, connection] = require("../SQL/sql.connection.platvirt");
 const Personas = require("../models/platf.personas.model")
 
 
