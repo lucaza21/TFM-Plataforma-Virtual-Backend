@@ -1,7 +1,7 @@
 //import SQL-db-config
 
 module.exports = (sequelize, DataTypes) => {
-    const materialDidactico = sequelize.define('cat_cursos',{
+    const catCursos = sequelize.define('cat_curso',{
         id_curso: {
             type:DataTypes.BIGINT,
             primaryKey:true,
@@ -57,7 +57,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull:false
         }
     })
-    return materialDidactico;
+    return catCursos;
 }
 // id_curso bigint NOT NULL AUTO_INCREMENT,
 //     id_profesor bigint NOT NULL,

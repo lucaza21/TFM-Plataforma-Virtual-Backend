@@ -28,7 +28,7 @@ router.get("/", (req, res) => {
 })
 
 
-router.get("/getCursos", cursos.getCursos);
+// router.get("/getCursos", cursos.getCursos);
 
 
 module.exports = router;
