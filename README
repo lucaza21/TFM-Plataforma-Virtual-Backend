@@ -1,4 +1,0 @@
-1. enpoint lista de cursos (cat_cursos)
-
-http://localhost:8000/api/cursos/getAll
-

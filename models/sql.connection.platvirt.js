@@ -6,7 +6,8 @@ const sequelize = new Sequelize(
 '123456abc.',
 {
 host: 'localhost',
-dialect: 'mysql'
+dialect: 'mysql',
+operatorsAliases: false,
 }
 );
 
@@ -22,7 +23,8 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 db.materialdidactico = require('./materialdidactico.model')(sequelize, DataTypes)
-db.catcursos = require('./catcursos.model')(sequelize, DataTypes)
+db.catcursos = require('./catcurso.model')(sequelize, DataTypes)
+db.profesor = require('./profesor.model')(sequelize, DataTypes)
 
 db.sequelize.sync({force:false}).then(() =>{
     console.log('re-sync done!');
