@@ -2,7 +2,13 @@
 const [DataTypes, sequelize] = require("../SQL/sql.connection.platvirt");
 const catCursos = require("../models/catcurso.model");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
+
+const { uploadImage, deleteImage, createFolder } = require("../cloudinary");
+const fs = require('fs-extra')
+
+
+const localImage = __dirname+'/../assets/cupcake.jpg'
 
 
 module.exports.listar_catCursos = (req, res, next) => {
@@ -16,7 +22,7 @@ module.exports.listar_catCursos = (req, res, next) => {
             //res.send("listando cursos desde SQL")
         })
         .catch((error) => {
-            return res.status(400).json('Error listando cursos : ', error);
+            return res.status(400).json({message: `Error listando cursos : ${error.message}`});
         });
      
 };
@@ -72,50 +78,111 @@ module.exports.bulk = (req, res, next) => {
         return res.status(201).json( { curso:curso } )
     })
     .catch((error) =>{
-        return res.status(400).json({ message: `Error creando cursos: ${error}`});
+        return res.status(400).json({ message: `Error creando cursos: ${error.message}`});
     })
     
 }; 
 
- module.exports.crear_catCursos = (req, res, next) => {
+module.exports.crear_catCursos = (req, res, next) => {
   
     const body = req.body;
     //console.log(body)
 
     //crear nuevo curso
-    cursos.create(body)
+    catCursos.create(body)
     .then((curso) => {
         return res.status(201).json( { curso:curso } )
     })
     .catch((error) =>{
-        return res.status(400).json({ message: `Error creando curso: ${error}`});
+        return res.status(400).json({ message: `Error creando curso: ${error.message}`});
     })
+};
+
+module.exports.subirArchivos = async (req, res, next) => {
+
+    console.log(req.files?.image)
+    if (req.files?.image){
+        const result = await uploadImage(req.files.image.tempFilePath)
+        console.log(result)
+        const body = req.body;
+        //console.log(body)
+        body.ruta_material_didactico = [{
+            public_id: result.public_id,
+            url: result.url
+        }]
+        
+        await fs.unlink(req.files.image.tempFilePath)
+
+        //crear nuevo curso
+        catCursos.create(body)
+        .then((curso) => {
+            return res.status(201).json( { curso:curso } )
+        })
+        .catch((error) =>{
+            return res.status(400).json({ message: `Error creando curso: ${error.message}`});
+        })
+    }
+    
+};
+/* module.exports.subirArchivos = async (req, res, next) => {
+
+    
+    try{
+        const result = await createFolder(localImage, "test2")
+        console.log(result)
+        const body = req.body
+        console.log(body)
+
+    } catch(err){
+        console.log(err)
+    }
+    
+    res.send('todo ok')
+   
+    
+}; */
+
+module.exports.eliminar_catCursos = async (req, res, next) => {
+    const id = req.params.id
+
+    await catCursos.findOne(
+        { 
+            where: {id_curso: id}
+        }
+        ).then(response => {
+            //console.log(response.ruta_material_didactico.includes("public_id"))
+            if(response.ruta_material_didactico.includes("public_id"))
+                {
+                    deleteImage(JSON.parse(response.ruta_material_didactico)[0].public_id)
+                    console.log('imagen de cloudinary eliminada')
+                }
+            catCursos.destroy({
+                where: {
+                        id_curso: response.id_curso
+                        }
+                }).then(rowDeleted => {
+                    if(rowDeleted === 0){
+                        return res.status(404).json({message: "curso no existe"});
+                    } else {
+                        console.log("curso eliminado")
+                        //console.log(rowDeleted)
+                        return res.status(204).json();
+                    }
+                }) // rowDeleted will return number of rows deleted
+                .catch((error) =>{
+                    return res.status(400).json({ message: `Error eliminando curso: ${error.message}`});
+                })
+            
+        })
+        .catch((error) => {
+            return res.status(400).json({message: `Error listando cursos : ${error.message}`});
+        });
+             
+   
 };  
     
 
-/*
-module.exports.eliminar_curso = (req, res, next) => {
-    const id = req.params.id
-    cursos.destroy({
-        where: {
-                id_curso: id 
-               }
-    }).then(rowDeleted => {
-        if(rowDeleted === 0){
-            return res.status(404).json({message: "curso no existe"});
-        } else {
-            console.log("curso eliminado")
-            return res.status(204).json();
-        }
-    }) // rowDeleted will return number of rows deleted
-    .catch((error) =>{
-        return res.status(400).json({ message: `Error eliminando curso: ${error}`});
-    })
 
-
-};
-
-*/
 
 /*
 module.exports.detail = (req, res) => {

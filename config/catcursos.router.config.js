@@ -8,6 +8,9 @@ const middleware = require("../middlewares/secure.middleware")
 
 router.get("/listar", catCursos.listar_catCursos);
 router.get("/bulk", catCursos.bulk);
+router.post("/crear", catCursos.crear_catCursos);
+router.post("/subir", catCursos.subirArchivos);
+router.delete("/eliminar/:id", catCursos.eliminar_catCursos);
 
 /* router.post("/login", alumnos.login_alumnos);
 router.post("/crear", alumnos.crear_alumno);

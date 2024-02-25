@@ -35,7 +35,7 @@ const CatCurso = sequelize.define(
         allowNull:false
     },
     ruta_material_didactico: {
-        type:DataTypes.STRING,
+        type:DataTypes.ARRAY(DataTypes.STRING),
         allowNull:false
     },
     perfil_ingreso: {

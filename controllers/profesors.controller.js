@@ -18,7 +18,7 @@ module.exports.crear_profesor = (req, res, next) => {
             return res.status(201).json( { profesor:profesor } )
         })
         .catch((error) =>{
-            return res.status(400).json({ message: `Error creando profesor: ${error}`});
+            return res.status(400).json({ message: `Error creando profesor: ${error.message}`});
         })
     })   
     
@@ -46,7 +46,7 @@ module.exports.login_profesor = (req, res) => {
         }
     })
     .catch((error) =>{
-        return res.status(400).json({ message: `Error listing profesor: ${error}`});
+        return res.status(400).json({ message: `Error listing profesor: ${error.message}`});
     }) 
 };
 
@@ -70,7 +70,7 @@ module.exports.listar_profesor = (req, res, next) => {
             //res.send("listando Profesor desde SQL")
         })
     .catch((error) => {
-        return res.status(400).json('Error listando alumnos : ', error);
+        return res.status(400).json({message:`Error listando alumnos : ${error.message}`});
     });
      
 };
@@ -90,7 +90,7 @@ module.exports.eliminar_profesor = (req, res, next) => {
         }
     }) // rowDeleted will return number of rows deleted
     .catch((error) =>{
-        return res.status(400).json({ message: `Error eliminando profesor: ${error}`});
+        return res.status(400).json({ message: `Error eliminando profesor: ${error.message}`});
     })
 
 
@@ -136,7 +136,7 @@ module.exports.bulk = (req, res, next) => {
         return res.status(201).json( { profesor:profesor } )
     })
     .catch((error) =>{
-        return res.status(400).json({ message: `Error creando profesores: ${error}`});
+        return res.status(400).json({ message: `Error creando profesores: ${error.message}`});
     })
     
 };

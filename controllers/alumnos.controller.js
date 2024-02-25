@@ -16,7 +16,7 @@ module.exports.crear_alumno = (req, res, next) => {
             return res.status(201).json( { alumno:alumno } )
         })
         .catch((error) =>{
-            return res.status(400).json({ message: `Error creando alumno: ${error}`});
+            return res.status(400).json({ message: `Error creando alumno: ${error.message}`});
         })
     })   
     
@@ -44,7 +44,7 @@ module.exports.login_alumnos = (req, res) => {
         }
     })
     .catch((error) =>{
-        return res.status(400).json({ message: `Error listing alumno: ${error}`});
+        return res.status(400).json({ message: `Error listing alumno: ${error.message}`});
     }) 
 };
 
@@ -59,7 +59,7 @@ module.exports.listar_alumnos = (req, res, next) => {
             //res.send("listando alumnos desde SQL")
         })
         .catch((error) => {
-            return res.status(400).json('Error listando alumnos : ', error);
+            return res.status(400).json({message: `Error listando alumnos : ${error.message}`});
         });
      
 };
@@ -79,10 +79,8 @@ module.exports.eliminar_alumno = (req, res, next) => {
         }
     }) // rowDeleted will return number of rows deleted
     .catch((error) =>{
-        return res.status(400).json({ message: `Error eliminando alumno: ${error}`});
+        return res.status(400).json({ message: `Error eliminando alumno: ${error.message}`});
     })
-
-
 };
 
 module.exports.bulk = (req, res, next) => {
@@ -125,7 +123,7 @@ module.exports.bulk = (req, res, next) => {
         return res.status(201).json( { alumno:alumno } )
     })
     .catch((error) =>{
-        return res.status(400).json({ message: `Error creando alumnos: ${error}`});
+        return res.status(400).json({ message: `Error creando alumnos: ${error.message}`});
     })
     
 };
