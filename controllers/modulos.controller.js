@@ -1,53 +1,116 @@
 //import model
 const [DataTypes, sequelize] = require("../SQL/sql.connection.platvirt");
-const { uploadImage, deleteImage, createFolder } = require("../cloudinary");
-const fs = require('fs-extra');
 
+const Modulo = require('../models/modulo.model')
+const CatCursos = require("../models/catcurso.model");
 const Profesor = require("../models/profesor.model");
-const Alumno = require("../models/alumno.model");
-const catCursos = require("../models/catcurso.model");
 const CursoAlumno = require("../models/curso_alumno.model");
-const Modulo = require("../models/modulo.model");
+const Alumno = require("../models/alumno.model");
 
 
-const localImage = __dirname+'/../assets/cupcake.jpg'
 
-
-module.exports.listar_catCursos = (req, res, next) => {
+module.exports.listar_modulo = (req, res, next) => {
     //console.log(req.body)
-    catCursos.findAll(
+    Modulo.findAll(   
         { 
-            include:
-                [
+            //where: {id_curso: 2 },
+            include: {
+                model: CatCursos,
+                as:'cat_cursos',
+                required:true
+                /* include:[
                     {
-                        model: Profesor,
-                        as: 'profesor',
-                        attributes: ["nombre", "ap_paterno"]    
+                        model:CursoAlumno,
+                        as:'curso_alumno'
                     },
                     {
-                        model: Alumno,
-                        as: 'alumno',
-                        attributes: ["nombre", "ap_paterno"]    
-                    },
-                    {
-                        model: Modulo,
-                        as: 'modulos',
-                        attributes: ["nombre_modulo"]    
-                    },
-                ], 
-            attributes:['id_curso','id_profesor', 'titulo', 'nombre_disenador', 'objetivo', 'introduccion', 'metodologia', 'ruta_material_didactico',
-                        'perfil_ingreso','insumos','evaluacion', 'horas', 'semanas'], raw:true}
+                        model:Alumno,
+                        as: 'alumno'
+                    }
+                ] */   
+            }, 
+            //attributes:['id_modulo','id_curso','nombre_modulo',], 
+            //raw:true
+        }
         ).then(response => {
-            //console.log(response)
+            //acceder valores dentro de la asociacion
+            //console.log(response[3].dataValues.cat_cursos.dataValues.titulo)
             return res.status(200).json(response)
             //res.send("listando cursos desde SQL")
         })
         .catch((error) => {
-            return res.status(400).json({message: `Error listando cursos : ${error.message}`});
+            return res.status(400).json({message: `Error listando modulo : ${error.message}`});
         });
      
 };
-module.exports.bulk_catCursos = (req, res, next) => {
+
+module.exports.crear_modulo = (req, res, next) => {
+    //console.log(req.body)
+    const body = req.body;
+    console.log(body)
+
+    //crear nuevo curso
+    Modulo.create(body)
+    .then((curso) => {
+        return res.status(201).json( { curso:curso } )
+    })
+    .catch((error) =>{
+        return res.status(400).json({ message: `Error creando modulo: ${error.message}`});
+    })
+     
+};
+
+module.exports.bulk_modulo = (req, res, next) => {
+    let bulk = [
+        {
+            "id_curso": 3,
+            "nombre_modulo": "introducción CSS",
+            "objetivo_particular": "entender principios",
+            "horas": 45,
+            "fecha_inicio": "2024-10-31 01:34:48.81+00",
+            "fecha_fin": "2025-10-31 01:34:48.81+00",
+            "ruta_material_didactico": "a/una/ruta"
+        },
+        {
+            "id_curso": 3,
+            "nombre_modulo": "introducción JS",
+            "objetivo_particular": "entender principios",
+            "horas": 45,
+            "fecha_inicio": "2024-10-31 01:34:48.81+00",
+            "fecha_fin": "2025-10-31 01:34:48.81+00",
+            "ruta_material_didactico": "a/una/ruta"
+        },
+        {
+            "id_curso": 1,
+            "nombre_modulo": "introducción HTML",
+            "objetivo_particular": "entender principios",
+            "horas": 45,
+            "fecha_inicio": "2024-10-31 01:34:48.81+00",
+            "fecha_fin": "2025-10-31 01:34:48.81+00",
+            "ruta_material_didactico": "a/una/ruta"
+        },
+        {
+            "id_curso": 1,
+            "nombre_modulo": "HTML BASICO",
+            "objetivo_particular": "entender principios",
+            "horas": 45,
+            "fecha_inicio": "2024-10-31 01:34:48.81+00",
+            "fecha_fin": "2025-10-31 01:34:48.81+00",
+            "ruta_material_didactico": "a/una/ruta"
+        },
+        ]
+    //crear nueva curso
+    Modulo.bulkCreate(bulk)
+    .then((curso) => {
+        return res.status(201).json( { curso:curso } )
+    })
+    .catch((error) =>{
+        return res.status(400).json({ message: `Error creando cursos: ${error}`});
+    })
+    
+};
+
+/* module.exports.bulk_catCursos = (req, res, next) => {
 
     let cursos = [
             {
@@ -79,7 +142,7 @@ module.exports.bulk_catCursos = (req, res, next) => {
                 semanas: 2,
             },
             {
-                id_profesor: 3,
+                id_profesor: 1,
                 titulo: "INTRO CSS",
                 nombre_disenador: "disenado1",
                 objetivo: "aprender bases CSS",
@@ -145,23 +208,6 @@ module.exports.subirArchivos = async (req, res, next) => {
     }
     
 };
-/* module.exports.subirArchivos = async (req, res, next) => {
-
-    
-    try{
-        const result = await createFolder(localImage, "test2")
-        console.log(result)
-        const body = req.body
-        console.log(body)
-
-    } catch(err){
-        console.log(err)
-    }
-    
-    res.send('todo ok')
-   
-    
-}; */
 
 module.exports.eliminar_catCursos = async (req, res, next) => {
     const id = req.params.id
@@ -200,62 +246,5 @@ module.exports.eliminar_catCursos = async (req, res, next) => {
         });
              
    
-};  
+};   */
     
-/*
-module.exports.detail = (req, res) => {
-    const id = req.params.id;
-    Post.findById(id)
-        .then((post)=>{
-            if(post){
-                return res.status(200).json(post);
-            } else{
-                return res.status(404).json({message: "Post doesnt exist"});
-            }
-        })
-        .catch((error) =>{
-            return res.status(400).json({ message: `Error listing post: ${error}`});
-        })
-}
-
-module.exports.update = (req, res) => {
-    const id = req.params.id;
-    const body = req.body;
-    Post.findByIdAndUpdate(id, body,{
-        new: true,
-        runValidators: true
-    })
-        .then((post)=>{
-            if(post){
-                return res.status(200).json(post);
-            } else{
-                return res.status(404).json({message: "Post doesnt exist"});
-            }
-        })
-        .catch((error) =>{
-            return res.status(400).json({ message: `Error updating post: ${error}`});
-        })
-}
-
-
-
-//-------------------------------------------------------------------------------------------
-module.exports.filter = (req, res) => {
-
-    const criteria = {};
-    const filter = req.query.author;
-    if(filter){
-        criteria.author = new RegExp(req.query.author, "i");
-    }
-    Post.find(criteria)
-        .then((posts)=>{
-            if(posts.length > 0){
-                return res.status(200).json(posts);
-            } else{
-                return res.status(404).json({message: "Author doesnt exist"});
-            }
-        })
-        .catch((error) =>{
-            return res.status(400).json({ message: `Error listing post: ${error}`});
-        })
-}; */

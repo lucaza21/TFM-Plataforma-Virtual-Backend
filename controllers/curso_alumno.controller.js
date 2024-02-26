@@ -42,54 +42,36 @@ module.exports.crear_curso_alumno = (req, res, next) => {
      
 };
 
-/* module.exports.bulk_catCursos = (req, res, next) => {
-
-    let cursos = [
+ module.exports.bulk_curso_alumno = (req, res, next) => {
+    let bulk = [
             {
-                id_profesor: 1,
-                titulo: "INTRO HTML",
-                nombre_disenador: "disenado1",
-                objetivo: "aprender bases html",
-                introduccion: "aprender bases html",
-                metodologia: "virtual",
-                ruta_material_didactico: "a/una/ruta",
-                perfil_ingreso: "xxx",
-                insumos: "xxx",
-                evaluacion: "si",
-                horas: 4,
-                semanas: 2,
-            },
-             {
-                id_profesor: 2,
-                titulo: "INTRO JS",
-                nombre_disenador: "disenado2",
-                objetivo: "aprender bases JS",
-                introduccion: "aprender bases JS",
-                metodologia: "virtual",
-                ruta_material_didactico: "a/una/ruta",
-                perfil_ingreso: "xxx",
-                insumos: "xxx",
-                evaluacion: "si",
-                horas: 4,
-                semanas: 2,
+                "id_curso": 1,
+                "id_alumno": 1,
+                "calificacion_global": 5.5
             },
             {
-                id_profesor: 1,
-                titulo: "INTRO CSS",
-                nombre_disenador: "disenado1",
-                objetivo: "aprender bases CSS",
-                introduccion: "aprender bases CSS",
-                metodologia: "virtual",
-                ruta_material_didactico: "a/una/ruta",
-                perfil_ingreso: "xxx",
-                insumos: "xxx",
-                evaluacion: "si",
-                horas: 4,
-                semanas: 2,
-            }, 
+                "id_curso": 1,
+                "id_alumno": 3,
+                "calificacion_global": 5.5
+            },
+            {
+                "id_curso": 2,
+                "id_alumno": 2,
+                "calificacion_global": 5.5
+            },
+            {
+                "id_curso": 3,
+                "id_alumno": 3,
+                "calificacion_global": 5.5
+            },
+            {
+                "id_curso": 3,
+                "id_alumno": 2,
+                "calificacion_global": 5.5
+            },
         ]
     //crear nueva curso
-    catCursos.bulkCreate(cursos)
+    CursoAlumno.bulkCreate(bulk)
     .then((curso) => {
         return res.status(201).json( { curso:curso } )
     })
@@ -99,6 +81,7 @@ module.exports.crear_curso_alumno = (req, res, next) => {
     
 }; 
 
+/*
 module.exports.crear_catCursos = (req, res, next) => {
   
     const body = req.body;

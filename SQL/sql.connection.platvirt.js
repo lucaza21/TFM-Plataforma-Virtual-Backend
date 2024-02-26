@@ -8,7 +8,7 @@ const sequelize = new DataTypes(
 host: 'localhost',
 dialect: 'mysql',
 define: {
-    timestamps: true,
+    timestamps: false,
     freezeTableName: true
   },
 },

@@ -4,6 +4,7 @@ const Alumno = require("./alumno.model");
 const Profesor = require("./profesor.model");
 const CatCurso = require("./catcurso.model");
 const CursoAlumno = require("./curso_alumno.model");
+const Modulo = require("./modulo.model");
 
 Profesor.hasMany(CatCurso, {
     foreignKey: "id_profesor",
@@ -53,6 +54,20 @@ CatCurso.hasMany(CursoAlumno, {
   onDelete: "cascade",
 });
 CursoAlumno.belongsTo(CatCurso,{
+  foreignKey: "id_curso",
+  as: 'cat_cursos',
+  onDelete: "cascade",
+});
+
+//
+//query desde CatCurso - Modulo
+CatCurso.hasMany(Modulo, {
+  foreignKey: "id_curso",
+  as: 'modulos',
+  onDelete: "cascade",
+});
+
+Modulo.belongsTo(CatCurso,{
   foreignKey: "id_curso",
   as: 'cat_cursos',
   onDelete: "cascade",

@@ -44,6 +44,10 @@ app.use('/api/catcursos', catCursos_router);
 const cursoAlumno_router = require("./config/curso_alumno.router.config");
 app.use('/api/cursoalumno', cursoAlumno_router);
 
+//import modulos router
+const modulos_router = require("./config/modulos.router.config");
+app.use('/api/modulos', modulos_router);
+
 app.use((error, req,res,next) => {
     console.error("Error: ", error)
     next();

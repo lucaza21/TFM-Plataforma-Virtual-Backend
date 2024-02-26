@@ -109,7 +109,7 @@ module.exports.bulk = (req, res, next) => {
                 usuario: "user_profesor1",
                 password: "secret"
             },
-           /*  {
+            {
                 nombre: "profesor2",
                 ap_paterno: "apellidoP2",
                 ap_materno: "apellidoM2",
@@ -128,7 +128,7 @@ module.exports.bulk = (req, res, next) => {
                 fecha_registro:"2021-10-31 01:34:48.81+00",
                 usuario: "user_profesor3",
                 password: "secret"
-            }, */
+            },
         ]
     //crear nueva profesor
     Profesor.bulkCreate(bulk)

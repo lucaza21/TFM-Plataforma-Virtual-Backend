@@ -16,7 +16,7 @@ CREATE TABLE profesor (
     correo VARCHAR(150),
     celular VARCHAR(150),
     fecha_registro TIMESTAMP NOT NULL,
-     usuario VARCHAR(150),
+    usuario VARCHAR(150),
     password VARCHAR(150),
     status SMALLINT,
     PRIMARY KEY (id_profesor)
@@ -34,7 +34,7 @@ CREATE TABLE alumno (
     fecha_registro TIMESTAMP NOT NULL,
 	usuario VARCHAR(150),
     password VARCHAR(150),
-    estatus SMALLINT,
+    status SMALLINT,
     PRIMARY KEY (id_alumno)
     -- CONSTRAINT fk_usuarios_persona_id FOREIGN KEY (persona_id) REFERENCES personas (id),
     -- CONSTRAINT fk_usuarios_role_id FOREIGN KEY (role_id) REFERENCES cat_roles (id)
@@ -63,7 +63,7 @@ CREATE TABLE cat_cursos (
     perfil_ingreso VARCHAR(200),
     insumos VARCHAR(250),
     evaluacion VARCHAR(150),
-    horas TIMESTAMP NOT NULL,
+    horas bigint NOT NULL,
     semanas integer,
     PRIMARY KEY (id_curso),
     CONSTRAINT fk_cat_cursos_id_profesor FOREIGN KEY (id_profesor) REFERENCES profesor (id_profesor)
@@ -76,7 +76,7 @@ CREATE TABLE modulos (
     id_curso bigint NOT NULL,
     nombre_modulo VARCHAR(250),
     objetivo_particular VARCHAR(250),
-	horas TIMESTAMP NOT NULL,
+	horas bigint NOT NULL,
 	fecha_inicio TIMESTAMP NOT NULL,
 	fecha_fin TIMESTAMP NOT NULL,
     ruta_material_didactico VARCHAR(1500),
