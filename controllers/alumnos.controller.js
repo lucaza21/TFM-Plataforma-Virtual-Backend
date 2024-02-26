@@ -2,7 +2,8 @@
 const [DataTypes, sequelize] = require("../SQL/sql.connection.platvirt");
 const Alumnos = require("../models/alumno.model");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
+const CatCurso = require("../models/catcurso.model");
 
 module.exports.crear_alumno = (req, res, next) => {
     bcrypt.hash(req.body.password, 10).then((hash) =>{
@@ -51,7 +52,14 @@ module.exports.login_alumnos = (req, res) => {
 module.exports.listar_alumnos = (req, res, next) => {
     //console.log(req.body)
     Alumnos.findAll(
-        { attributes:['id_alumno', 'nombre', 'ap_paterno', 'ap_materno', 'correo', 'celular', 'fecha_registro',
+        { 
+            include:
+            {
+                model: CatCurso,
+                as: 'cat_cursos',
+                   
+            },
+            attributes:['id_alumno', 'nombre', 'ap_paterno', 'ap_materno', 'correo', 'celular', 'fecha_registro',
                         'usuario','password','status'], raw:true}
         ).then(response => {
             //console.log(response)

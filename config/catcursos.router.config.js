@@ -7,7 +7,7 @@ const middleware = require("../middlewares/secure.middleware")
 
 
 router.get("/listar", catCursos.listar_catCursos);
-router.get("/bulk", catCursos.bulk);
+router.get("/bulk", catCursos.bulk_catCursos);
 router.post("/crear", catCursos.crear_catCursos);
 router.post("/subir", catCursos.subirArchivos);
 router.delete("/eliminar/:id", catCursos.eliminar_catCursos);

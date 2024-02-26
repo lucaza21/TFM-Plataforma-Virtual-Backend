@@ -1,49 +1,48 @@
 //import model
 const [DataTypes, sequelize] = require("../SQL/sql.connection.platvirt");
-const catCursos = require("../models/catcurso.model");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-
-const { uploadImage, deleteImage, createFolder } = require("../cloudinary");
-const fs = require('fs-extra');
-const Profesor = require("../models/profesor.model");
 const Alumno = require("../models/alumno.model");
+const CatCurso = require("../models/catcurso.model");
+
 const CursoAlumno = require("../models/curso_alumno.model");
 
 
-const localImage = __dirname+'/../assets/cupcake.jpg'
 
-
-module.exports.listar_catCursos = (req, res, next) => {
+module.exports.listar_curso_alumno = (req, res, next) => {
     //console.log(req.body)
-    catCursos.findAll(
+    CursoAlumno.findAll(
+           
         { 
-            include:
-                [
-                    {
-                        model: Profesor,
-                        as: 'profesor',
-                        attributes: ["nombre", "ap_paterno"]    
-                    },
-                    {
-                        model: Alumno,
-                        as: 'alumno',
-                        attributes: ["nombre", "ap_paterno"]    
-                    },
-                ], 
-            attributes:['id_curso','id_profesor', 'titulo', 'nombre_disenador', 'objetivo', 'introduccion', 'metodologia', 'ruta_material_didactico',
-                        'perfil_ingreso','insumos','evaluacion', 'horas', 'semanas'], raw:true}
+            where: {id_alumno: 2 },
+            include: ["cat_cursos","alumno"], 
+            attributes:['id_curso_alumno','id_curso','id_alumno'], raw:true}
         ).then(response => {
             //console.log(response)
             return res.status(200).json(response)
             //res.send("listando cursos desde SQL")
         })
         .catch((error) => {
-            return res.status(400).json({message: `Error listando cursos : ${error.message}`});
+            return res.status(400).json({message: `Error listando curso_alumno : ${error.message}`});
         });
      
 };
-module.exports.bulk_catCursos = (req, res, next) => {
+
+module.exports.crear_curso_alumno = (req, res, next) => {
+    //console.log(req.body)
+    const body = req.body;
+    console.log(body)
+
+    //crear nuevo curso
+    CursoAlumno.create(body)
+    .then((curso) => {
+        return res.status(201).json( { curso:curso } )
+    })
+    .catch((error) =>{
+        return res.status(400).json({ message: `Error creando curso: ${error.message}`});
+    })
+     
+};
+
+/* module.exports.bulk_catCursos = (req, res, next) => {
 
     let cursos = [
             {
@@ -141,23 +140,6 @@ module.exports.subirArchivos = async (req, res, next) => {
     }
     
 };
-/* module.exports.subirArchivos = async (req, res, next) => {
-
-    
-    try{
-        const result = await createFolder(localImage, "test2")
-        console.log(result)
-        const body = req.body
-        console.log(body)
-
-    } catch(err){
-        console.log(err)
-    }
-    
-    res.send('todo ok')
-   
-    
-}; */
 
 module.exports.eliminar_catCursos = async (req, res, next) => {
     const id = req.params.id
@@ -196,62 +178,5 @@ module.exports.eliminar_catCursos = async (req, res, next) => {
         });
              
    
-};  
+};   */
     
-/*
-module.exports.detail = (req, res) => {
-    const id = req.params.id;
-    Post.findById(id)
-        .then((post)=>{
-            if(post){
-                return res.status(200).json(post);
-            } else{
-                return res.status(404).json({message: "Post doesnt exist"});
-            }
-        })
-        .catch((error) =>{
-            return res.status(400).json({ message: `Error listing post: ${error}`});
-        })
-}
-
-module.exports.update = (req, res) => {
-    const id = req.params.id;
-    const body = req.body;
-    Post.findByIdAndUpdate(id, body,{
-        new: true,
-        runValidators: true
-    })
-        .then((post)=>{
-            if(post){
-                return res.status(200).json(post);
-            } else{
-                return res.status(404).json({message: "Post doesnt exist"});
-            }
-        })
-        .catch((error) =>{
-            return res.status(400).json({ message: `Error updating post: ${error}`});
-        })
-}
-
-
-
-//-------------------------------------------------------------------------------------------
-module.exports.filter = (req, res) => {
-
-    const criteria = {};
-    const filter = req.query.author;
-    if(filter){
-        criteria.author = new RegExp(req.query.author, "i");
-    }
-    Post.find(criteria)
-        .then((posts)=>{
-            if(posts.length > 0){
-                return res.status(200).json(posts);
-            } else{
-                return res.status(404).json({message: "Author doesnt exist"});
-            }
-        })
-        .catch((error) =>{
-            return res.status(400).json({ message: `Error listing post: ${error}`});
-        })
-}; */

@@ -40,6 +40,10 @@ app.use('/api/profesors', profesors_router);
 const catCursos_router = require("./config/catcursos.router.config");
 app.use('/api/catcursos', catCursos_router);
 
+//import cursoALumno router
+const cursoAlumno_router = require("./config/curso_alumno.router.config");
+app.use('/api/cursoalumno', cursoAlumno_router);
+
 app.use((error, req,res,next) => {
     console.error("Error: ", error)
     next();
