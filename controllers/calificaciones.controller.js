@@ -68,29 +68,19 @@ module.exports.crear_calificacion = (req, res, next) => {
 module.exports.bulk_calificacion = (req, res, next) => {
     let bulk = [
         {
-            "id_entrega": 4,
+            "id_entrega": 1,
             "calificacion": 9.5,
             "comentario_calificacion": "muy bien",
         },
         {
-            "id_entrega": 5,
+            "id_entrega": 2,
             "calificacion": 9.5,
             "comentario_calificacion": "muy bien",
         },
         {
-            "id_entrega": 6,
+            "id_entrega": 3,
             "calificacion": 9.5,
             "comentario_calificacion": "muy bien",
-        },
-        {
-            "id_entrega": 7,
-            "calificacion": 5.5,
-            "comentario_calificacion": "raspando",
-        },
-        {
-            "id_entrega": 8,
-            "calificacion": 3.5,
-            "comentario_calificacion": "perdió",
         },
         
         ]
