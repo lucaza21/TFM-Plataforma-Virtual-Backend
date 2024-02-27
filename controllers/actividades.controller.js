@@ -1,24 +1,25 @@
 //import model
 const [DataTypes, sequelize] = require("../SQL/sql.connection.platvirt");
 
-const Modulo = require('../models/modulo.model')
+const Actividad = require('../models/actividades.model')
 const CatCursos = require("../models/catcurso.model");
 const Profesor = require("../models/profesor.model");
 const CursoAlumno = require("../models/curso_alumno.model");
 const Alumno = require("../models/alumno.model");
+const Modulo = require("../models/modulo.model");
 
 
 
-module.exports.listar_modulo = (req, res, next) => {
+module.exports.listar_actividad = (req, res, next) => {
     //console.log(req.body)
-    Modulo.findAll(   
+    Actividad.findAll(   
         { 
             //where: {id_curso: 2 },
             include: {
-                model: CatCursos,
-                as:'cat_cursos',
+                model: Modulo,
+                as:'modulos',
                 required:true,
-                include:[
+               /*  include:[
                     {
                         model:CursoAlumno,
                         as:'curso_alumno'
@@ -27,80 +28,94 @@ module.exports.listar_modulo = (req, res, next) => {
                         model:Alumno,
                         as: 'alumno'
                     }
-                ]   
+                ]  */  
             }, 
-            //attributes:['id_modulo','id_curso','nombre_modulo',], 
+            //attributes:['id_Actividad','id_curso','nombre_Actividad',], 
             //raw:true
         }
         ).then(response => {
             //acceder valores dentro de la asociacion
             //console.log(response[3].dataValues.cat_cursos.dataValues.titulo)
+            console.log(response)
             return res.status(200).json(response)
             //res.send("listando cursos desde SQL")
         })
         .catch((error) => {
-            return res.status(400).json({message: `Error listando modulo : ${error.message}`});
+            return res.status(400).json({message: `Error listando Actividad : ${error.message}`});
         });
      
 };
 
-module.exports.crear_modulo = (req, res, next) => {
+module.exports.crear_actividad = (req, res, next) => {
     //console.log(req.body)
     const body = req.body;
     console.log(body)
 
     //crear nuevo curso
-    Modulo.create(body)
+    Actividad.create(body)
     .then((curso) => {
         return res.status(201).json( { curso:curso } )
     })
     .catch((error) =>{
-        return res.status(400).json({ message: `Error creando modulo: ${error.message}`});
+        return res.status(400).json({ message: `Error creando Actividad: ${error.message}`});
     })
      
 };
 
-module.exports.bulk_modulo = (req, res, next) => {
+module.exports.bulk_actividad = (req, res, next) => {
     let bulk = [
         {
-            "id_curso": 3,
-            "nombre_modulo": "introducción CSS",
-            "objetivo_particular": "entender principios",
-            "horas": 45,
+            "id_modulo": 1,
+            "nombre_actividad": "Actividad_1",
+            "ponderacion_actividad": 7.2,
             "fecha_inicio": "2024-10-31 01:34:48.81+00",
             "fecha_fin": "2025-10-31 01:34:48.81+00",
-            "ruta_material_didactico": "a/una/ruta"
+            "ruta_actividad": "a/una/ruta"
         },
         {
-            "id_curso": 3,
-            "nombre_modulo": "introducción JS",
-            "objetivo_particular": "entender principios",
-            "horas": 45,
+            "id_modulo": 1,
+            "nombre_actividad": "Actividad_2",
+            "ponderacion_actividad": 7.2,
             "fecha_inicio": "2024-10-31 01:34:48.81+00",
             "fecha_fin": "2025-10-31 01:34:48.81+00",
-            "ruta_material_didactico": "a/una/ruta"
+            "ruta_actividad": "a/una/ruta"
         },
         {
-            "id_curso": 1,
-            "nombre_modulo": "introducción HTML",
-            "objetivo_particular": "entender principios",
-            "horas": 45,
+            "id_modulo": 2,
+            "nombre_actividad": "Actividad_1",
+            "ponderacion_actividad": 7.2,
             "fecha_inicio": "2024-10-31 01:34:48.81+00",
             "fecha_fin": "2025-10-31 01:34:48.81+00",
-            "ruta_material_didactico": "a/una/ruta"
+            "ruta_actividad": "a/una/ruta"
         },
         {
-            "id_curso": 1,
-            "nombre_modulo": "HTML BASICO",
-            "objetivo_particular": "entender principios",
-            "horas": 45,
+            "id_modulo": 3,
+            "nombre_actividad": "Actividad_1",
+            "ponderacion_actividad": 7.2,
             "fecha_inicio": "2024-10-31 01:34:48.81+00",
             "fecha_fin": "2025-10-31 01:34:48.81+00",
-            "ruta_material_didactico": "a/una/ruta"
+            "ruta_actividad": "a/una/ruta"
         },
+        {
+            "id_modulo": 3,
+            "nombre_actividad": "Actividad_2",
+            "ponderacion_actividad": 7.2,
+            "fecha_inicio": "2024-10-31 01:34:48.81+00",
+            "fecha_fin": "2025-10-31 01:34:48.81+00",
+            "ruta_actividad": "a/una/ruta"
+        },
+        {
+            "id_modulo": 4,
+            "nombre_actividad": "Actividad_1",
+            "ponderacion_actividad": 7.2,
+            "fecha_inicio": "2024-10-31 01:34:48.81+00",
+            "fecha_fin": "2025-10-31 01:34:48.81+00",
+            "ruta_actividad": "a/una/ruta"
+        },
+        
         ]
     //crear nueva curso
-    Modulo.bulkCreate(bulk)
+    Actividad.bulkCreate(bulk)
     .then((curso) => {
         return res.status(201).json( { curso:curso } )
     })

@@ -48,6 +48,10 @@ app.use('/api/cursoalumno', cursoAlumno_router);
 const modulos_router = require("./config/modulos.router.config");
 app.use('/api/modulos', modulos_router);
 
+//import actividades router
+const actividades_router = require("./config/actividades.router.config");
+app.use('/api/actividades', actividades_router);
+
 app.use((error, req,res,next) => {
     console.error("Error: ", error)
     next();

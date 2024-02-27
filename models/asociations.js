@@ -5,6 +5,7 @@ const Profesor = require("./profesor.model");
 const CatCurso = require("./catcurso.model");
 const CursoAlumno = require("./curso_alumno.model");
 const Modulo = require("./modulo.model");
+const Actividad = require("./actividades.model");
 
 Profesor.hasMany(CatCurso, {
     foreignKey: "id_profesor",
@@ -72,6 +73,21 @@ Modulo.belongsTo(CatCurso,{
   as: 'cat_cursos',
   onDelete: "cascade",
 });
+
+//query desde Modulo - Actividades
+Modulo.hasMany(Actividad,{
+  foreignKey: "id_modulo",
+  as: 'actividades',
+  onDelete: "cascade",
+});
+
+Actividad.belongsTo(Modulo, {
+  foreignKey: "id_modulo",
+  as: 'modulos',
+  onDelete: "cascade",
+});
+
+
 
 /* sequelize.sync({alter:true}).then((data) => {
     console.log("asociations synced successfully")
