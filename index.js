@@ -56,6 +56,10 @@ app.use('/api/actividades', actividades_router);
 const entregas_router = require("./config/entregas.router.config");
 app.use('/api/entregas', entregas_router);
 
+//import calificaciones router
+const calificaciones_router = require("./config/calificaciones.router.config");
+app.use('/api/calificaciones', calificaciones_router);
+
 app.use((error, req,res,next) => {
     console.error("Error: ", error)
     next();

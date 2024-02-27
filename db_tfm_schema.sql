@@ -121,11 +121,11 @@ CREATE TABLE entrega_actividades (
 
 CREATE TABLE calificaciones (
     id_calificacion bigint NOT NULL AUTO_INCREMENT,
-    id_actividad bigint NOT NULL,
+    id_entrega bigint NOT NULL,
     calificacion bigint NOT NULL,
-    comentario_calificacion bigint NOT NULL,
+    comentario_calificacion VARCHAR(250) NOT NULL,
     PRIMARY KEY (id_calificacion),
-    CONSTRAINT fk_calificaciones_id_actividad FOREIGN KEY (id_actividad) REFERENCES entrega_actividades (id_actividad)
+    CONSTRAINT fk_calificaciones_id_entrega FOREIGN KEY (id_entrega) REFERENCES entrega_actividades (id_entrega)
     -- CONSTRAINT fk_evaluaciones_alumno_id FOREIGN KEY (alumno_id) REFERENCES alumnos (id)
 )  ENGINE=INNODB DEFAULT CHARSET=UTF8MB4;
 
