@@ -115,7 +115,7 @@ CREATE TABLE entrega_actividades (
     comentario_entrega VARCHAR(500),
     PRIMARY KEY (id_entrega),
     CONSTRAINT fk_entrega_actividades_id_actividad FOREIGN KEY (id_actividad) REFERENCES actividades (id_actividad),
-    CONSTRAINT fk_entrega_actividades_alumno_id FOREIGN KEY (id_alumno) REFERENCES alumnos (id_alumno)
+    CONSTRAINT fk_entrega_actividades_id_alumno FOREIGN KEY (id_alumno) REFERENCES alumno (id_alumno)
 )  ENGINE=INNODB DEFAULT CHARSET=UTF8MB4;
 
 

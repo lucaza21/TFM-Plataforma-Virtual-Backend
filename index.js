@@ -52,6 +52,10 @@ app.use('/api/modulos', modulos_router);
 const actividades_router = require("./config/actividades.router.config");
 app.use('/api/actividades', actividades_router);
 
+//import entregas router
+const entregas_router = require("./config/entregas.router.config");
+app.use('/api/entregas', entregas_router);
+
 app.use((error, req,res,next) => {
     console.error("Error: ", error)
     next();

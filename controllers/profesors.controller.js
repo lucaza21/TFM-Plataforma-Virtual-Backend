@@ -57,7 +57,7 @@ module.exports.listar_profesor = (req, res, next) => {
             include:
                 [{
                 model: CatCurso,
-                as: 'cursos',
+                as: 'cat_cursos',
                 attributes: ["titulo"]    
                 }], 
             attributes:['id_profesor', 'nombre', 'ap_paterno', 'ap_materno', 'correo', 'celular', 'fecha_registro',

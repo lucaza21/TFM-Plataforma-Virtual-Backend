@@ -6,6 +6,7 @@ const CatCurso = require("./catcurso.model");
 const CursoAlumno = require("./curso_alumno.model");
 const Modulo = require("./modulo.model");
 const Actividad = require("./actividades.model");
+const Entrega = require("./entregas.model");
 
 Profesor.hasMany(CatCurso, {
     foreignKey: "id_profesor",
@@ -86,6 +87,34 @@ Actividad.belongsTo(Modulo, {
   as: 'modulos',
   onDelete: "cascade",
 });
+
+// one-to-one
+//query desde Actividades - Entregas
+Entrega.belongsTo(Actividad,{
+  foreignKey: "id_actividad",
+  as: 'actividades',
+  onDelete: "cascade",
+});
+
+Actividad.belongsTo(Entrega, {
+  foreignKey: "id_actividad",
+  as: 'entrega_actividades',
+  onDelete: "cascade",
+});
+
+//query desde Alumnos - Entregas
+Alumno.hasMany(Entrega, {
+  foreignKey: "id_alumno",
+  as: 'entrega_actividades',
+  onDelete: "cascade",
+});
+Entrega.belongsTo(Alumno,{
+  foreignKey: "id_alumno",
+  as: 'alumno',
+  onDelete: "cascade",
+});
+
+
 
 
 
