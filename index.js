@@ -16,7 +16,9 @@ app.use((req,res,next) => {
     next();
 })
 
-//allo CORS
+//allow dotenv
+require('dotenv').config()
+//allow CORS
 app.use(cors())
 //allow body data
 app.use(express.json());
@@ -67,5 +69,6 @@ app.use((error, req,res,next) => {
 
 //listen port
 app.listen(8000, () =>{
+    //console.log(process.env.CLOUDINARY_CLOUD_NAME,process.env.CLOUDINARY_CLOUD_API_KEY,process.env.CLOUDINARY_CLOUD_API_SECRET)
     console.log("app running on http://localhost:8000");
 })
