@@ -8,6 +8,8 @@ const CursoAlumno = require("../models/curso_alumno.model");
 const Alumno = require("../models/alumno.model");
 const Modulo = require("../models/modulo.model");
 
+
+
 module.exports.listar_actividad = (req, res, next) => {
     //console.log(req.body)
     Actividad.findAll(   
@@ -43,8 +45,6 @@ module.exports.listar_actividad = (req, res, next) => {
         });
      
 };
-
-
 
 module.exports.crear_actividad = (req, res, next) => {
     //console.log(req.body)
