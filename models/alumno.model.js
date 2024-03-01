@@ -1,26 +1,28 @@
 //import SQL-db-config
 const [DataTypes, sequelize] = require("../SQL/sql.connection.platvirt");
 
-const Profesor = sequelize.define(
-  "profesor",
+const Alumno = sequelize.define(
+  "alumno",
   {
-    id_profesor: {
+    id_alumno: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
-      allowNull: false
+      allowNull: false,
     },
     nombre: {
       type: DataTypes.STRING,
-      allowNull: false 
+      allowNull: false,
+      unique: true
     },
     ap_paterno: {
       type: DataTypes.STRING,
       allowNull: false
+      
     },
     ap_materno: {
       type: DataTypes.STRING,
-      allowNull: false 
+      allowNull: false
     },
     correo: {
       type: DataTypes.STRING,
@@ -59,27 +61,20 @@ const Profesor = sequelize.define(
       defaultValue: 1
     },
   },
-  { indexes: [{unique: true, fields: ["correo", "usuario"]}]},
   {
-    tableName: "profesor",
+    tableName: "alumno",
     timestamps: false,
-  }
+    underscore: true,
+  },
+    
+  {indexes: [{unique: true, fields: ["correo"]}]},
 );
 
-
-Profesor.sync().then((data) => {
-  console.log("Table Profesor and model synced successfully")
+Alumno.sync().then((data) => {
+  console.log("Table Alumnos and model synced successfully")
 }).catch((error) =>{
   console.log("Error syncing the table and model", error);
 })
 
-module.exports = Profesor
 
-// id_profesor bigint NOT NULL AUTO_INCREMENT,
-//     nombre VARCHAR(100) NOT NULL,
-//     ap_paterno VARCHAR(150),
-//     ap_materno VARCHAR(150),
-//     correo VARCHAR(150),
-//     celular VARCHAR(150),
-//     fecha_registro TIMESTAMP NOT NULL,
-//      usuario VARCHAR(150),
+module.exports = Alumno

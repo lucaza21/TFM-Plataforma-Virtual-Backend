@@ -1,49 +1,74 @@
-const platf_router = require("./config/platf.router.config");
-const cursos_router = require("./config/cursos.router.config");
-const profesor_router = require("./config/profesor.router.config");
-
 const express = require("express");
 const app = express();
-
+const cors = require('cors')
+const fileUpload = require('express-fileupload')
 
 
 //import SQL-db-config
-const {sequelize, connection} = require('./models/sql.connection.platvirt');
+//require("./SQL/sql.connection.sakila");
+
+//import sakila router
+//const sakila_router = require("./config/sakila.router.config");
+//app.use(sakila_router);
 
 app.use((req,res,next) => {
     console.log("request received: ", req.method, req.path)
     next();
 })
 
+//allow dotenv
+require('dotenv').config()
+//allow CORS
+app.use(cors())
 //allow body data
 app.use(express.json());
+//allow upload Files
+app.use(fileUpload({
+    useTempFiles : true,
+    tempFileDir : './uploads'
+}));
 
-//import sakila router
-// const sakila_router = require("./config/sakila.router.config");
-// app.use(sakila_router);
+require("./models/asociations")
 
-//import plataforma_virtual router
+//import alumnos router
+const alumnos_router = require("./config/alumnos.router.config");
+app.use('/api/alumnos', alumnos_router);
 
-const { connect } = require("mongoose");
+//import profesors router
+const profesors_router = require("./config/profesors.router.config");
+app.use('/api/profesors', profesors_router);
 
-// Rutas
-app.use(platf_router);
+//import catCursos router
+const catCursos_router = require("./config/catcursos.router.config");
+app.use('/api/catcursos', catCursos_router);
 
-app.use("/api/cursos", cursos_router);
+//import cursoALumno router
+const cursoAlumno_router = require("./config/curso_alumno.router.config");
+app.use('/api/cursoalumno', cursoAlumno_router);
 
-app.use("/api/profesor", profesor_router);
+//import modulos router
+const modulos_router = require("./config/modulos.router.config");
+app.use('/api/modulos', modulos_router);
 
-app.use("/api/materialdidactico", profesor_router);
+//import actividades router
+const actividades_router = require("./config/actividades.router.config");
+app.use('/api/actividades', actividades_router);
+
+//import entregas router
+const entregas_router = require("./config/entregas.router.config");
+app.use('/api/entregas', entregas_router);
+
+//import calificaciones router
+const calificaciones_router = require("./config/calificaciones.router.config");
+app.use('/api/calificaciones', calificaciones_router);
+
 app.use((error, req,res,next) => {
     console.error("Error: ", error)
     next();
 })
 
-
-
-
 //listen port
-app.listen(8000, async () =>{
+app.listen(8000, () =>{
+    //console.log(process.env.CLOUDINARY_CLOUD_NAME,process.env.CLOUDINARY_CLOUD_API_KEY,process.env.CLOUDINARY_CLOUD_API_SECRET)
     console.log("app running on http://localhost:8000");
-    // await connection();
 })
