@@ -7,6 +7,7 @@ const middleware = require("../middlewares/secure.middleware")
 
 router.post("/login", alumnos.login_alumnos);
 router.post("/crear", alumnos.crear_alumno);
+router.put("/editar/:id", alumnos.editar_alumno);
 
 router.get("/listar", alumnos.listar_alumnos);
 router.get("/bulk", alumnos.bulk);
