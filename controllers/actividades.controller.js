@@ -44,8 +44,6 @@ module.exports.listar_actividad = (req, res, next) => {
      
 };
 
-
-
 module.exports.crear_actividad = (req, res, next) => {
     //console.log(req.body)
     const body = req.body;
@@ -155,6 +153,22 @@ module.exports.bulk_actividad = (req, res, next) => {
         return res.status(400).json({ message: `Error creando cursos: ${error}`});
     })
     
+};
+
+module.exports.editar_actividad = (req, res, next) =>{
+    const id = req.params.id;
+    //console.log("TESTING "+ req.body);
+    Actividad.update(req.body, {
+        where:{id_actividad: id}
+    }).then(value =>{
+        if(value == 0){
+            return res.status(400).json({message: "No fue posible actualizar la actividad."});
+        }else{
+            return res.status(202).json({message: "La actividad fue actualizar."});
+        }
+    }).catch(error =>{
+        return res.status(500).json({message: "Error al actualizar actividad " + error.message});
+    })
 };
 
 /* module.exports.bulk_catCursos = (req, res, next) => {

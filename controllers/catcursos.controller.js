@@ -222,45 +222,28 @@ module.exports.eliminar_catCursos = async (req, res, next) => {
             return res.status(400).json({ message: `Error eliminando curso: ${error.message}`});
         }) */        
 
-};  
+};
+
+module.exports.editar_catcurso = (req, res )=>{
+
+    const id = req.params.id;
+
+    catCursos.update(req.body, {
+        where: {
+            id_curso: id
+        }
+    }).then(updated =>{
+        if(updated == 0){
+            return res.status(400).json({message: "Registro no fue actualizado."});
+        }else{
+            return res.status(200).json({message: "El curso fue actualizado correctamente."});
+        }
+    }).catch( error =>{
+        return res.status(500).json({message: "Error actualizando Curso: " + error.message});
+    });
+};
     
 /*
-module.exports.detail = (req, res) => {
-    const id = req.params.id;
-    Post.findById(id)
-        .then((post)=>{
-            if(post){
-                return res.status(200).json(post);
-            } else{
-                return res.status(404).json({message: "Post doesnt exist"});
-            }
-        })
-        .catch((error) =>{
-            return res.status(400).json({ message: `Error listing post: ${error}`});
-        })
-}
-
-module.exports.update = (req, res) => {
-    const id = req.params.id;
-    const body = req.body;
-    Post.findByIdAndUpdate(id, body,{
-        new: true,
-        runValidators: true
-    })
-        .then((post)=>{
-            if(post){
-                return res.status(200).json(post);
-            } else{
-                return res.status(404).json({message: "Post doesnt exist"});
-            }
-        })
-        .catch((error) =>{
-            return res.status(400).json({ message: `Error updating post: ${error}`});
-        })
-}
-
-
-
 //-------------------------------------------------------------------------------------------
 module.exports.filter = (req, res) => {
 

@@ -155,6 +155,24 @@ module.exports.bulk = (req, res, next) => {
     
 };
 
+module.exports.editar_alumno =(req, res, next) =>{
+    const id = req.params.id;
+
+    Alumno.update(req.body,{
+        where:{id_alumno: id}
+    }).then(value => {
+        if(value == 0){
+            return res.status(400).json({message:"Alumno no fue actualizado"})
+        }else{
+            console.log("alumno actualizado!")
+            return res.status(202).json({message: "Datos del alumno fueron actualizado."});
+        }
+    }).catch(error =>{
+        return res.status(500).json({message: "Error actualizando Alumno "+ error.message});
+    });
+
+};
+
 /*
 module.exports.detail = (req, res) => {
     const id = req.params.id;

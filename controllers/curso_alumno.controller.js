@@ -77,8 +77,6 @@ module.exports.eliminar_curso_alumno = (req, res, next) => {
     })
 };
 
-
-
  module.exports.bulk_curso_alumno = (req, res, next) => {
     let bulk = [
             {
