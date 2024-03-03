@@ -16,7 +16,6 @@ router.post("/crear", catCursos.crear_catCursos);
 <<<<<<< HEAD
 router.post("/subir/:id", upload.single('file'), catCursos.subirArchivos);
 =======
-router.post("/subir", catCursos.subirArchivos);
 router.put("/editar/:id", catCursos.editar_catcurso);
 >>>>>>> 5582a5e50159bf090d80c9c9554f15d0d6ca8950
 router.delete("/eliminar/:id", catCursos.eliminar_catCursos);
