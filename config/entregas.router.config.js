@@ -9,8 +9,9 @@ const entregas = require("../controllers/entregas.controller");
 router.get("/listar", entregas.listar_entrega);
 router.post("/crear", entregas.crear_entrega);
 router.get("/bulk", entregas.bulk_entrega);
-/* router.post("/subir", catCursos.subirArchivos);
-router.delete("/eliminar/:id", catCursos.eliminar_catCursos); */
+/* router.post("/subir", catCursos.subirArchivos);*/
+router.put("/editar/:id", entregas.editar_entrega);
+router.delete("/eliminar/:id", entregas.eliminar_entrega); 
 
 
 

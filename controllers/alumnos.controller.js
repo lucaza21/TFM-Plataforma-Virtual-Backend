@@ -4,6 +4,7 @@ const Alumnos = require("../models/alumno.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const CatCurso = require("../models/catcurso.model");
+const Alumno = require("../models/alumno.model");
 
 module.exports.crear_alumno = (req, res, next) => {
     bcrypt.hash(req.body.password, 10).then((hash) =>{
@@ -19,9 +20,9 @@ module.exports.crear_alumno = (req, res, next) => {
         .catch((error) =>{
             return res.status(400).json({ message: `Error creando alumno: ${error.message}`});
         })
-    })   
-    
+    })
 };
+
 
 module.exports.login_alumnos = (req, res) => { 
     Alumnos.findOne({
@@ -72,6 +73,24 @@ module.exports.listar_alumnos = (req, res, next) => {
      
 };
 
+module.exports.editar_alumno =(req, res, next) =>{
+    const id = req.params.id;
+
+    Alumno.update(req.body,{
+        where:{id_alumno: id}
+    }).then(value => {
+        if(value == 0){
+            return res.status(400).json({message:"Alumno no fue actualizado"})
+        }else{
+            console.log("alumno actualizado!")
+            return res.status(202).json({message: "Datos del alumno fueron actualizado."});
+        }
+    }).catch(error =>{
+        return res.status(500).json({message: "Error actualizando Alumno "+ error.message});
+    });
+
+};
+
 module.exports.eliminar_alumno = (req, res, next) => {
     const id = req.params.id
     Alumnos.destroy({
@@ -83,7 +102,7 @@ module.exports.eliminar_alumno = (req, res, next) => {
             return res.status(404).json({message: "alumno no existe"});
         } else {
             console.log("alumno eliminado")
-            return res.status(204).json();
+            return res.status(200).json();
         }
     }) // rowDeleted will return number of rows deleted
     .catch((error) =>{

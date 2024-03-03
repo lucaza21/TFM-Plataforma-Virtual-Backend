@@ -161,7 +161,26 @@ module.exports.subirArchivos = async (req, res, next) => {
     res.send('todo ok')
    
     
-}; */
+}; */ 
+
+module.exports.editar_catcurso = (req, res )=>{
+
+    const id = req.params.id;
+
+    catCursos.update(req.body, {
+        where: {
+            id_curso: id
+        }
+    }).then(updated =>{
+        if(updated == 0){
+            return res.status(400).json({message: "Registro no fue actualizado."});
+        }else{
+            return res.status(200).json({message: "El curso fue actualizado correctamente."});
+        }
+    }).catch( error =>{
+        return res.status(500).json({message: "Error actualizando Curso: " + error.message});
+    });
+};
 
 module.exports.eliminar_catCursos = async (req, res, next) => {
     const id = req.params.id

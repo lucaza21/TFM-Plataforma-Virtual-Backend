@@ -65,6 +65,41 @@ module.exports.crear_calificacion = (req, res, next) => {
      
 };
 
+module.exports.editar_calificaciones =(req, res, next) =>{
+    const id = req.params.id;
+    Calificacion.update(req.body,{
+        where:{id_calificacion: id}
+    }).then(value => {
+        if(value == 0){
+            return res.status(400).json({message:"Calificacion no fue actualizado"})
+        }else{
+            return res.status(200).json({message: "Datos de la Calificacion fueron actualizado."});
+        }
+    }).catch(error =>{
+        return res.status(500).json({message: "Error actualizando Calificacion "+ error.message});
+    });
+
+};
+
+module.exports.eliminar_calificaciones = (req, res, next) => {
+    const id = req.params.id
+    Calificacion.destroy({
+        where: {
+                id_calificacion: id 
+               }
+    }).then(rowDeleted => {
+        if(rowDeleted === 0){
+            return res.status(404).json({message: "Calificacion no existe"});
+        } else {
+            console.log("Calificacion fue eliminada")
+            return res.status(200).json({message: "Calificacion fue eliminada"});
+        }
+    }) // rowDeleted will return number of rows deleted
+    .catch((error) =>{
+        return res.status(400).json({ message: `Error eliminando Calificacion: ${error.message}`});
+    })
+};
+
 module.exports.bulk_calificacion = (req, res, next) => {
     let bulk = [
         {

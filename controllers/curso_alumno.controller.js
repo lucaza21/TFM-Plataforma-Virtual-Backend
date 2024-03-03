@@ -39,8 +39,45 @@ module.exports.crear_curso_alumno = (req, res, next) => {
     .catch((error) =>{
         return res.status(400).json({ message: `Error creando curso: ${error.message}`});
     })
-     
+
 };
+
+module.exports.editar_curso_alumno =(req, res, next) =>{
+    const id = req.params.id;
+
+    CursoAlumno.update(req.body,{
+        where:{id_curso_alumno: id}
+    }).then(value => {
+        if(value == 0){
+            return res.status(400).json({message:"Curso Alumno no fue actualizado"})
+        }else{
+            return res.status(202).json({message: "Curso alumno fueron actualizado."});
+        }
+    }).catch(error =>{
+        return res.status(500).json({message: "Error actualizando Curso Alumno "+ error.message});
+    });
+
+};
+
+module.exports.eliminar_curso_alumno = (req, res, next) => {
+    const id = req.params.id
+    CursoAlumno.destroy({
+        where: {
+            id_curso_alumno: id 
+               }
+    }).then(rowDeleted => {
+        if(rowDeleted === 0){
+            return res.status(404).json({message: "Curso alumno no existe"});
+        } else {
+            return res.status(200).json({message: "Curso alumno eliminado"});
+        }
+    }) // rowDeleted will return number of rows deleted
+    .catch((error) =>{
+        return res.status(400).json({ message: `Error eliminando curso alumno: ${error.message}`});
+    })
+};
+
+
 
  module.exports.bulk_curso_alumno = (req, res, next) => {
     let bulk = [
