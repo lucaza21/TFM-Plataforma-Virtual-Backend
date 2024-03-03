@@ -45,7 +45,7 @@ CREATE TABLE curso_alumno (
     id_curso_alumno bigint NOT NULL AUTO_INCREMENT,
     id_curso bigint NOT NULL,
     id_alumno bigint,
-    calificacion_global DECIMAL,
+    calificacion_global DECIMAL(10,2),
     PRIMARY KEY (id_curso_alumno),
     CONSTRAINT fk_curso_alumno_id_curso FOREIGN KEY (id_curso) REFERENCES cat_cursos (id_curso),
     CONSTRAINT fk_curso_alumno_id_alumno FOREIGN KEY (id_alumno) REFERENCES alumno (id_alumno)
@@ -97,7 +97,7 @@ CREATE TABLE actividades (
     id_actividad bigint NOT NULL AUTO_INCREMENT,
     id_modulo bigint NOT NULL,
     nombre_actividad VARCHAR(250),
-    ponderacion_actividad DECIMAL,
+    ponderacion_actividad DECIMAL(10,2),
 	fecha_inicio TIMESTAMP NOT NULL,
 	fecha_fin TIMESTAMP NOT NULL,
     ruta_actividad VARCHAR(1500),

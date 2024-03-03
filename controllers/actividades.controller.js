@@ -8,8 +8,6 @@ const CursoAlumno = require("../models/curso_alumno.model");
 const Alumno = require("../models/alumno.model");
 const Modulo = require("../models/modulo.model");
 
-
-
 module.exports.listar_actividad = (req, res, next) => {
     //console.log(req.body)
     Actividad.findAll(   
@@ -46,6 +44,8 @@ module.exports.listar_actividad = (req, res, next) => {
      
 };
 
+
+
 module.exports.crear_actividad = (req, res, next) => {
     //console.log(req.body)
     const body = req.body;
@@ -60,6 +60,38 @@ module.exports.crear_actividad = (req, res, next) => {
         return res.status(400).json({ message: `Error creando Actividad: ${error.message}`});
     })
      
+};
+
+module.exports.editar_actividad = (req, res, next) =>{
+    const id = req.params.id;
+    //console.log("TESTING "+ req.body);
+    Actividad.update(req.body, {
+        where:{id_actividad: id}
+    }).then(value =>{
+        if(value == 0){
+            return res.status(400).json({message: "No fue posible actualizar la actividad."});
+        }else{
+            return res.status(202).json({message: "La actividad fue actualizar."});
+        }
+    }).catch(error =>{
+        return res.status(500).json({message: "Error al actualizar actividad " + error.message});
+    })
+};
+
+module.exports.eliminar_actividad =(req,res) =>{
+    const id = req.params.id;
+    Actividad.destroy({
+        where: {id_actividad: id}
+    }).then(deleted =>{
+        if(deleted === 0){
+            return res.status(404).json({message: "Actividad no existe"});
+        } else {
+            return res.status(202).json({message: "Actividad eliminada"});
+        }
+    }) // rowDeleted will return number of rows deleted
+    .catch((error) =>{
+        return res.status(400).json({ message: `Error eliminando actividad: ${error.message}`});
+    })
 };
 
 module.exports.bulk_actividad = (req, res, next) => {

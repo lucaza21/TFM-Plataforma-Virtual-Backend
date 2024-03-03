@@ -9,6 +9,8 @@ const actividades = require("../controllers/actividades.controller");
 router.get("/listar", actividades.listar_actividad);
 router.post("/crear", actividades.crear_actividad);
 router.get("/bulk", actividades.bulk_actividad);
+router.put("/editar/:id", actividades.editar_actividad);
+router.delete("/eliminar/:id", actividades.eliminar_actividad);
 /* router.post("/subir", catCursos.subirArchivos);
 router.delete("/eliminar/:id", catCursos.eliminar_catCursos); */
 
