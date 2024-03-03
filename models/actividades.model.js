@@ -43,11 +43,11 @@ const Actividad = sequelize.define(
   },
 )
 
-Actividad.sync().then((data) => {
+/* Actividad.sync().then((data) => {
     console.log("Table Actividades and model synced successfully")
   }).catch((error) =>{
     console.log("Error syncing the table Actividades and model", error);
-  })
+  }) */
 
 
 module.exports = Actividad

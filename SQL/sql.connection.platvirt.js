@@ -21,5 +21,11 @@ sequelize.authenticate().then(() => {
     console.error('Unable to connect to the database: ', error);
     });
 
+/* sequelize.sync().then((data) => {
+    console.log("Table Catcursos and model synced successfully")
+  }).catch((error) =>{
+    console.log("Error syncing the table and model", error);
+  }) */
+
 
 module.exports = [DataTypes, sequelize]

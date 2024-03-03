@@ -16,7 +16,7 @@ CREATE TABLE profesor (
     correo VARCHAR(150),
     celular VARCHAR(150),
     fecha_registro TIMESTAMP NOT NULL,
-    usuario VARCHAR(150),
+    usuario VARCHAR(150) UNIQUE,
     password VARCHAR(150),
     status SMALLINT,
     PRIMARY KEY (id_profesor)
@@ -32,7 +32,7 @@ CREATE TABLE alumno (
     correo VARCHAR(150),
     celular VARCHAR(150),
     fecha_registro TIMESTAMP NOT NULL,
-	usuario VARCHAR(150),
+	usuario VARCHAR(150) UNIQUE,
     password VARCHAR(150),
     status SMALLINT,
     PRIMARY KEY (id_alumno)
@@ -54,12 +54,12 @@ CREATE TABLE curso_alumno (
 CREATE TABLE cat_cursos (
     id_curso bigint NOT NULL AUTO_INCREMENT,
     id_profesor bigint NOT NULL,
-    titulo VARCHAR(100) NOT NULL,
+    titulo VARCHAR(100) NOT NULL UNIQUE,
     nombre_disenador VARCHAR(150) NOT NULL,
     objetivo VARCHAR(500),
     introduccion VARCHAR(500),
     metodologia VARCHAR(300),
-    ruta_material_didactico VARCHAR(1000),
+    ruta_material_didactico JSON,
     perfil_ingreso VARCHAR(200),
     insumos VARCHAR(250),
     evaluacion VARCHAR(150),

@@ -30,11 +30,11 @@ const CursoAlumno = sequelize.define(
   },
 )
 
-CursoAlumno.sync().then((data) => {
+/* CursoAlumno.sync().then((data) => {
     console.log("Table CuroSlumno and model synced successfully")
   }).catch((error) =>{
     console.log("Error syncing the table and model", error);
-  })
+  }) */
 
 
 module.exports = CursoAlumno

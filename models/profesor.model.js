@@ -67,11 +67,11 @@ const Profesor = sequelize.define(
 );
 
 
-Profesor.sync().then((data) => {
+/* Profesor.sync().then((data) => {
   console.log("Table Profesor and model synced successfully")
 }).catch((error) =>{
   console.log("Error syncing the table and model", error);
-})
+}) */
 
 module.exports = Profesor
 

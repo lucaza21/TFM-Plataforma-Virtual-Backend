@@ -30,12 +30,12 @@ const Calificacion = sequelize.define(
   },
 )
 
-Calificacion.sync().then((data) => {
+/* Calificacion.sync().then((data) => {
     console.log("Table Calificacion and model synced successfully")
   }).catch((error) =>{
     console.log("Error syncing the table Calificacion and model", error);
   })
-
+ */
 
 module.exports = Calificacion
 

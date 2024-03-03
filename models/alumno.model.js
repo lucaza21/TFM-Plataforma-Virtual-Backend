@@ -37,7 +37,10 @@ const Alumno = sequelize.define(
             msg:'Valid email-id required'
         }
       },
-      unique: true
+      unique: {
+        arg: true,
+        msg: 'El nombre del curso no puede repetirse '
+      },
     },
     fecha_registro: {
       type: DataTypes.DATE,
@@ -61,20 +64,21 @@ const Alumno = sequelize.define(
       defaultValue: 1
     },
   },
+  {indexes: [{unique: true, fields: ["correo"]}]},
   {
     tableName: "alumno",
     timestamps: false,
     underscore: true,
   },
     
-  {indexes: [{unique: true, fields: ["correo"]}]},
+  
 );
 
-Alumno.sync().then((data) => {
+/* Alumno.sync().then((data) => {
   console.log("Table Alumnos and model synced successfully")
 }).catch((error) =>{
   console.log("Error syncing the table and model", error);
-})
+}) */
 
 
 module.exports = Alumno

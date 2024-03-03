@@ -5,11 +5,15 @@ const router = express.Router();
 const catCursos = require("../controllers/catcursos.controller");
 const middleware = require("../middlewares/secure.middleware")
 
+const multer  = require('multer');
+const upload = multer({ dest: 'uploads/' });
+
 
 router.get("/listar", catCursos.listar_catCursos);
 router.get("/bulk", catCursos.bulk_catCursos);
+//router.post("/crear", catCursos.crear_catCursos);
 router.post("/crear", catCursos.crear_catCursos);
-router.post("/subir", catCursos.subirArchivos);
+router.post("/subir/:id", upload.single('file'), catCursos.subirArchivos);
 router.delete("/eliminar/:id", catCursos.eliminar_catCursos);
 
 /* router.post("/login", alumnos.login_alumnos);
@@ -26,5 +30,6 @@ router.get("/api/filter", users.filter); */
 router.get("/", (req, res) => {
     res.json({ message: "Hello desde Alumnos" })
 })
+
 
 module.exports = router;

@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const cors = require('cors')
-const fileUpload = require('express-fileupload')
+//const fileUpload = require('express-fileupload')
 
 
 //import SQL-db-config
@@ -23,10 +23,10 @@ app.use(cors())
 //allow body data
 app.use(express.json());
 //allow upload Files
-app.use(fileUpload({
+/* app.use(fileUpload({
     useTempFiles : true,
-    tempFileDir : './uploads'
-}));
+    tempFileDir : './uploads',
+})); */
 
 require("./models/asociations")
 

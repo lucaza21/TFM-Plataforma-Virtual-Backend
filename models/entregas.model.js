@@ -39,11 +39,11 @@ const Entrega = sequelize.define(
   },
 )
 
-Entrega.sync().then((data) => {
+/* Entrega.sync().then((data) => {
     console.log("Table Entregas and model synced successfully")
   }).catch((error) =>{
     console.log("Error syncing the table Entregas and model", error);
-  })
+  }) */
 
 
 module.exports = Entrega

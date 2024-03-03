@@ -47,11 +47,11 @@ const Modulo = sequelize.define(
   },
 )
 
-Modulo.sync().then((data) => {
+/* Modulo.sync().then((data) => {
     console.log("Table Modulos and model synced successfully")
   }).catch((error) =>{
     console.log("Error syncing the table and model", error);
-  })
+  }) */
 
 
 module.exports = Modulo

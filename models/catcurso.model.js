@@ -16,7 +16,11 @@ const CatCurso = sequelize.define(
     },
     titulo: {
         type:DataTypes.STRING,
-        allowNull:false
+        allowNull:false,
+        unique: {
+            name: 'email',
+            msg: 'Oops. Looks like you already have an account with this email address. Please try to login.',
+          },
     },
     nombre_disenador: {
         type:DataTypes.STRING,
@@ -35,9 +39,9 @@ const CatCurso = sequelize.define(
         allowNull:false
     },
     ruta_material_didactico: {
-        type:DataTypes.ARRAY(DataTypes.STRING),
+        type:DataTypes.JSON,
         //type:DataTypes.STRING,
-        allowNull:false
+        //allowNull:false
     },
     perfil_ingreso: {
         type:DataTypes.STRING,
@@ -60,18 +64,24 @@ const CatCurso = sequelize.define(
         allowNull:false
     }
 },
+{indexes: [{unique: true, fields: ["titulo"]}]},
 {
     tableName: "cat_cursos",
     timestamps: false,
     underscore: true,
+    
   },
+  
 )
 
-CatCurso.sync().then((data) => {
+//CatCurso.sync({ alter: true }).then((data) => {
+
+
+/* CatCurso.sync().then((data) => {
     console.log("Table Catcursos and model synced successfully")
   }).catch((error) =>{
     console.log("Error syncing the table and model", error);
-  })
+  }) */
 
 
 module.exports = CatCurso

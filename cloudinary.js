@@ -9,21 +9,33 @@ cloudinary.config({
     secure: true
 });
 
-const uploadImage = async (imagePath) => {
+const uploadFolder = async (folderName, fName) => {
+    return await cloudinary.uploader.upload('uploads\\cd1fd1dec3de7d429ac794bedddd1f2f', 
+        {
+            folder: folderName,
+            public_id : fName  
+        }
+    )
+};
+
+const uploadImage = async (imagePath, folderName, fName) => {
     return await cloudinary.uploader.upload(imagePath, {
-        folder: 'replit'
+        folder: folderName,
+        public_id : fName
     })
 };
 
-const createFolder = async (localImage, folderName) => {
-    return await cloudinary.uploader.upload(localImage, {
-        folder: folderName
-    })
-};
-
-
-const deleteImage = async(publicId) => {
-    await cloudinary.uploader.destroy(publicId)
+const deleteFolder = async(folderName) => {
+    return await cloudinary.api.delete_folder(folderName)
 }
 
-module.exports = { uploadImage, deleteImage, createFolder }
+const deleteAllImages = async(folderName) => {
+    return await cloudinary.api.delete_resources_by_prefix(folderName)
+}
+const deleteImage = async(publicId) => {
+    return await cloudinary.uploader.destroy(publicId)
+}
+
+
+  
+module.exports = { uploadFolder, uploadImage, deleteFolder, deleteAllImages, deleteImage }

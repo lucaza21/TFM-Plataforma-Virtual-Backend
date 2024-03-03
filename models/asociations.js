@@ -132,7 +132,7 @@ Calificacion.belongsTo(Entrega, {
 
 
 
-/* sequelize.sync({alter:true}).then((data) => {
+/* sequelize.sync().then((data) => {
     console.log("asociations synced successfully")
   }).catch((error) =>{
     console.log("Error syncing the table and model", error);
