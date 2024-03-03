@@ -102,7 +102,7 @@ module.exports.eliminar_alumno = (req, res, next) => {
             return res.status(404).json({message: "alumno no existe"});
         } else {
             console.log("alumno eliminado")
-            return res.status(204).json();
+            return res.status(200).json();
         }
     }) // rowDeleted will return number of rows deleted
     .catch((error) =>{
