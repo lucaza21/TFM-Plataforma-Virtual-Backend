@@ -217,23 +217,6 @@ module.exports.eliminar_catCursos = async (req, res, next) => {
             return res.status(400).json({Error: `Error eliminando curso - ${error.name}: ${error.message}`});
         })
       
-    /* catCursos.destroy({
-        where: {
-                id_curso: id
-                }
-        }).then(rowDeleted => {
-            if(rowDeleted === 0){
-                return res.status(404).json({message: "curso no existe"});
-            } else {
-                console.log("curso eliminado")
-                //console.log(rowDeleted)
-                return res.status(204).json();
-            }
-        }) // rowDeleted will return number of rows deleted
-        .catch((error) =>{
-            return res.status(400).json({ message: `Error eliminando curso: ${error.message}`});
-        }) */        
-
 };
 
 module.exports.editar_catcurso = (req, res )=>{
