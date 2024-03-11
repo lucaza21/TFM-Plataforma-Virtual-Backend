@@ -111,7 +111,7 @@ module.exports.crear_catCursos = async (req, res, next) => {
             if(curso !== null){
                 throw new Error("El curso mencionado Ya existe - Dos cursos no pueden llevar el mismo Titulo")
             }
-            return uploadFolder(body.titulo, "un_nombre")
+            return uploadFolder(body.titulo, "primer_nombre")
         }).then((result) => {
             body.ruta_material_didactico = [{
                 public_id: result.public_id,
