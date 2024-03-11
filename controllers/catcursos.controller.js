@@ -113,7 +113,6 @@ module.exports.crear_catCursos = async (req, res, next) => {
             }
             return uploadFolder(body.titulo, "un_nombre")
         }).then((result) => {
-            
             body.ruta_material_didactico = [{
                 public_id: result.public_id,
                 url: result.url,
@@ -141,12 +140,11 @@ module.exports.crear_catCursos = async (req, res, next) => {
 module.exports.subirArchivos = async (req, res, next) => {
     const id = req.params.id
     //console.log(req?.file)
-    oName = req.file.originalname.split('.')[0]
     if (req?.file){
         catCursos.findOne(
             { 
                 where: {id_curso: id},
-                attributes:['id_curso','id_profesor', 'titulo', 'ruta_material_didactico', 'insumos'],
+                attributes:['id_curso','id_profesor', 'titulo', 'ruta_material_didactico'],
                 raw: true 
             }).then(curso => {
                 //console.log(curso)
@@ -156,23 +154,13 @@ module.exports.subirArchivos = async (req, res, next) => {
                 //ruta = JSON.parse(curso.ruta_material_didactico)[0].folder
                 ruta = curso.ruta_material_didactico[0].folder
                 //console.log(ruta)
-                return uploadImage(req.file.path, ruta, oName)
+                return uploadImage(req.file.path, ruta, req.file.originalname)
             }).then(response => {
                 //console.log(response)
                 fs.unlink(req.file.path)
-                return response
-            }).then(response =>{
-                return catCursos.update({ insumos: response.url},{
-                    where: {id_curso: id},
-                    })
-            }).then(updated => {
-                //console.log(updated)
-                if(updated == 0){
-                    return res.status(400).json({message: "Registro no fue actualizado."});
-                }else{
-                    return res.status(200).json({message: `Se ha subido el archivo ${req.file.originalname} a la carpeta ${ruta}`});
-                }
+                return res.status(200).json({message: `Se ha subido el archivo ${req.file.originalname} a la carpeta ${ruta}`});
             }).catch(error => {
+                //console.log({message: `Error subiendo el archivo - ${error.name}: ${error.message}`})
                 fs.unlink(req.file.path)
                 return res.status(400).json({Error: `Error subiendo el archivo - ${error.name}: ${error.message}`});
             })
@@ -211,12 +199,29 @@ module.exports.eliminar_catCursos = async (req, res, next) => {
                 })
         })
         .then(response => {
-            return res.status(200).json({message: `Se han eliminado todas los archivos del folder, el folder y el curso ${folder} de la DDBB`});
+            return res.status(200).json({message: `Se han eliminado todas los archivos del folder, el folder y el curso de la DDBB ${folder}`});
         })
         .catch(error => {
             return res.status(400).json({Error: `Error eliminando curso - ${error.name}: ${error.message}`});
         })
       
+    /* catCursos.destroy({
+        where: {
+                id_curso: id
+                }
+        }).then(rowDeleted => {
+            if(rowDeleted === 0){
+                return res.status(404).json({message: "curso no existe"});
+            } else {
+                console.log("curso eliminado")
+                //console.log(rowDeleted)
+                return res.status(204).json();
+            }
+        }) // rowDeleted will return number of rows deleted
+        .catch((error) =>{
+            return res.status(400).json({ message: `Error eliminando curso: ${error.message}`});
+        }) */        
+
 };
 
 module.exports.editar_catcurso = (req, res )=>{
@@ -226,12 +231,12 @@ module.exports.editar_catcurso = (req, res )=>{
     catCursos.update(req.body, {
         where: {
             id_curso: id
-        },
+        }
     }).then(updated =>{
         if(updated == 0){
             return res.status(400).json({message: "Registro no fue actualizado."});
         }else{
-            return res.status(200).json({message: "El curso fue actualizado correctamente.", updated});
+            return res.status(200).json({message: "El curso fue actualizado correctamente."});
         }
     }).catch( error =>{
         return res.status(500).json({message: "Error actualizando Curso: " + error.message});
