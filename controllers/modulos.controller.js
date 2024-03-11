@@ -45,8 +45,9 @@ module.exports.listar_modulo = (req, res, next) => {
 };
 
 module.exports.crear_modulo = (req, res, next) => {
-    //console.log(req.body)
+    const id_curso = req.params.id
     const body = req.body;
+    body.id_curso = id_curso
     console.log(body)
 
     //crear nuevo curso

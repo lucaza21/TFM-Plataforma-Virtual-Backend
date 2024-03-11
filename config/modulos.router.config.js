@@ -7,7 +7,7 @@ const modulos = require("../controllers/modulos.controller");
 
 
 router.get("/listar", modulos.listar_modulo);
-router.post("/crear", modulos.crear_modulo);
+router.post("/crear/:id", modulos.crear_modulo);
 router.get("/bulk", modulos.bulk_modulo);
 /* router.post("/subir", catCursos.subirArchivos);
 router.delete("/eliminar/:id", catCursos.eliminar_catCursos); */

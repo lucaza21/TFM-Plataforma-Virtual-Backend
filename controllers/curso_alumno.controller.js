@@ -80,27 +80,27 @@ module.exports.eliminar_curso_alumno = (req, res, next) => {
  module.exports.bulk_curso_alumno = (req, res, next) => {
     let bulk = [
             {
-                "id_curso": 1,
+                "id_curso": 10,
                 "id_alumno": 1,
                 "calificacion_global": 5.5
             },
             {
-                "id_curso": 1,
+                "id_curso": 9,
                 "id_alumno": 3,
                 "calificacion_global": 5.5
             },
             {
-                "id_curso": 2,
+                "id_curso": 11,
                 "id_alumno": 2,
                 "calificacion_global": 5.5
             },
             {
-                "id_curso": 3,
+                "id_curso": 13,
                 "id_alumno": 3,
                 "calificacion_global": 5.5
             },
             {
-                "id_curso": 3,
+                "id_curso": 13,
                 "id_alumno": 2,
                 "calificacion_global": 5.5
             },

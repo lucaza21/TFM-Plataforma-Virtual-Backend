@@ -140,11 +140,12 @@ module.exports.crear_catCursos = async (req, res, next) => {
 module.exports.subirArchivos = async (req, res, next) => {
     const id = req.params.id
     //console.log(req?.file)
+    oName = req.file.originalname.split('.')[0]
     if (req?.file){
         catCursos.findOne(
             { 
                 where: {id_curso: id},
-                attributes:['id_curso','id_profesor', 'titulo', 'ruta_material_didactico'],
+                attributes:['id_curso','id_profesor', 'titulo', 'ruta_material_didactico', 'insumos'],
                 raw: true 
             }).then(curso => {
                 //console.log(curso)
@@ -154,13 +155,23 @@ module.exports.subirArchivos = async (req, res, next) => {
                 //ruta = JSON.parse(curso.ruta_material_didactico)[0].folder
                 ruta = curso.ruta_material_didactico[0].folder
                 //console.log(ruta)
-                return uploadImage(req.file.path, ruta, req.file.originalname)
+                return uploadImage(req.file.path, ruta, oName)
             }).then(response => {
                 //console.log(response)
                 fs.unlink(req.file.path)
-                return res.status(200).json({message: `Se ha subido el archivo ${req.file.originalname} a la carpeta ${ruta}`});
+                return response
+            }).then(response =>{
+                return catCursos.update({ insumos: response.url},{
+                    where: {id_curso: id},
+                    })
+            }).then(updated => {
+                //console.log(updated)
+                if(updated == 0){
+                    return res.status(400).json({message: "Registro no fue actualizado."});
+                }else{
+                    return res.status(200).json({message: `Se ha subido el archivo ${req.file.originalname} a la carpeta ${ruta}`});
+                }
             }).catch(error => {
-                //console.log({message: `Error subiendo el archivo - ${error.name}: ${error.message}`})
                 fs.unlink(req.file.path)
                 return res.status(400).json({Error: `Error subiendo el archivo - ${error.name}: ${error.message}`});
             })
