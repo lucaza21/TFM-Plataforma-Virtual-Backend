@@ -113,6 +113,7 @@ module.exports.crear_catCursos = async (req, res, next) => {
             }
             return uploadFolder(body.titulo, "primer_nombre")
         }).then((result) => {
+            
             body.ruta_material_didactico = [{
                 public_id: result.public_id,
                 url: result.url,
@@ -210,28 +211,11 @@ module.exports.eliminar_catCursos = async (req, res, next) => {
                 })
         })
         .then(response => {
-            return res.status(200).json({message: `Se han eliminado todas los archivos del folder, el folder y el curso de la DDBB ${folder}`});
+            return res.status(200).json({message: `Se han eliminado todas los archivos del folder, el folder y el curso ${folder} de la DDBB`});
         })
         .catch(error => {
             return res.status(400).json({Error: `Error eliminando curso - ${error.name}: ${error.message}`});
-        })
-      
-    /* catCursos.destroy({
-        where: {
-                id_curso: id
-                }
-        }).then(rowDeleted => {
-            if(rowDeleted === 0){
-                return res.status(404).json({message: "curso no existe"});
-            } else {
-                console.log("curso eliminado")
-                //console.log(rowDeleted)
-                return res.status(204).json();
-            }
-        }) // rowDeleted will return number of rows deleted
-        .catch((error) =>{
-            return res.status(400).json({ message: `Error eliminando curso: ${error.message}`});
-        }) */        
+        })     
 
 };
 
@@ -242,12 +226,12 @@ module.exports.editar_catcurso = (req, res )=>{
     catCursos.update(req.body, {
         where: {
             id_curso: id
-        }
+        },
     }).then(updated =>{
         if(updated == 0){
             return res.status(400).json({message: "Registro no fue actualizado."});
         }else{
-            return res.status(200).json({message: "El curso fue actualizado correctamente."});
+            return res.status(200).json({message: "El curso fue actualizado correctamente.", updated});
         }
     }).catch( error =>{
         return res.status(500).json({message: "Error actualizando Curso: " + error.message});
