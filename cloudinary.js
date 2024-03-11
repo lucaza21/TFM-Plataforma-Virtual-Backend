@@ -9,6 +9,7 @@ cloudinary.config({
     secure: true
 });
 
+//upload
 const uploadFolder = async (folderName, fName) => {
     return await cloudinary.uploader.upload('uploads\\cd1fd1dec3de7d429ac794bedddd1f2f', 
         {
