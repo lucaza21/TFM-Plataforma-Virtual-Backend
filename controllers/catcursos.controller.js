@@ -243,24 +243,3 @@ module.exports.editar_catcurso = (req, res )=>{
     });
 };
     
-/*
-//-------------------------------------------------------------------------------------------
-module.exports.filter = (req, res) => {
-
-    const criteria = {};
-    const filter = req.query.author;
-    if(filter){
-        criteria.author = new RegExp(req.query.author, "i");
-    }
-    Post.find(criteria)
-        .then((posts)=>{
-            if(posts.length > 0){
-                return res.status(200).json(posts);
-            } else{
-                return res.status(404).json({message: "Author doesnt exist"});
-            }
-        })
-        .catch((error) =>{
-            return res.status(400).json({ message: `Error listing post: ${error}`});
-        })
-}; */
