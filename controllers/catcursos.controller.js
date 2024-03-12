@@ -1,5 +1,4 @@
 //import model
-const [DataTypes, sequelize] = require("../SQL/sql.connection.platvirt");
 const { uploadFolder, uploadImage, deleteFolder, deleteAllImages, deleteImage} = require("../cloudinary");
 const fs = require('fs-extra');
 
@@ -29,11 +28,10 @@ module.exports.listar_catCursos = (req, res, next) => {
                     {
                         model: Modulo,
                         as: 'modulos',
-                        attributes: ["nombre_modulo"]    
+                        attributes: ["id_modulo","nombre_modulo", "ruta_material_didactico"]    
                     },
                 ], 
-            attributes:['id_curso','id_profesor', 'titulo', 'nombre_disenador', 'objetivo', 'introduccion', 'metodologia', 'ruta_material_didactico',
-                        'perfil_ingreso','insumos','evaluacion', 'horas', 'semanas'], raw:true}
+            }
         ).then(response => {
             //console.log(response)
             return res.status(200).json(response)
@@ -141,7 +139,7 @@ module.exports.crear_catCursos = async (req, res, next) => {
 module.exports.subirArchivos = async (req, res, next) => {
     const id = req.params.id
     //console.log(req?.file)
-    oName = req.file.originalname.split('.')[0]
+    oName = req.file?.originalname.split('.')[0]
     if (req?.file){
         catCursos.findOne(
             { 
@@ -168,7 +166,7 @@ module.exports.subirArchivos = async (req, res, next) => {
             }).then(updated => {
                 //console.log(updated)
                 if(updated == 0){
-                    return res.status(400).json({message: "Registro no fue actualizado."});
+                    return res.status(400).json({message: "Error Registro no fue actualizado."});
                 }else{
                     return res.status(200).json({message: `Se ha subido el archivo ${req.file.originalname} a la carpeta ${ruta}`});
                 }
@@ -189,7 +187,14 @@ module.exports.eliminar_catCursos = async (req, res, next) => {
         { 
             where: {id_curso: id},
             attributes:['id_curso','id_profesor', 'titulo', 'ruta_material_didactico'],
-            raw: true 
+            include:
+                [
+                    {
+                        model: Modulo,
+                        as: 'modulos',
+                        attributes: ["id_modulo","nombre_modulo", "ruta_material_didactico"]    
+                    },
+                ], 
         }).then(curso => {
             if(curso === null){
                 throw new Error("El curso mencionado no existe")
@@ -199,19 +204,33 @@ module.exports.eliminar_catCursos = async (req, res, next) => {
             //public_id = JSON.parse(curso.ruta_material_didactico)[0].public_id
             folder = curso.ruta_material_didactico[0].folder
             public_id = curso.ruta_material_didactico[0].public_id
+
+            id_modulos = curso.modulos.map(id => id. id_modulo)
+            console.log(id_modulos)
             
             return deleteAllImages(folder)
-        }).then(resposne => {
+        }).then(response => {
+            //console.log(response)
             return deleteFolder(folder)
         }).then(response => {
-            catCursos.destroy({
+            //console.log(response)
+            return Modulo.destroy({
+                where: {
+                        id_modulo: id_modulos
+                        }
+                })
+        })
+        .then(response => {
+            console.log(response)
+            return catCursos.destroy({
                 where: {
                         id_curso: id
                         }
                 })
         })
         .then(response => {
-            return res.status(200).json({message: `Se han eliminado todas los archivos del folder, el folder y el curso ${folder} de la DDBB`});
+            console.log(response)
+            return res.status(200).json({message: `Se han eliminado todas los archivos del folder, el folder en claudinary, los modulos del curso y el curso ${folder} de la DDBB`});
         })
         .catch(error => {
             return res.status(400).json({Error: `Error eliminando curso - ${error.name}: ${error.message}`});

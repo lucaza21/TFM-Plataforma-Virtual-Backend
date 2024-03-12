@@ -79,7 +79,7 @@ CREATE TABLE modulos (
 	horas bigint NOT NULL,
 	fecha_inicio TIMESTAMP NOT NULL,
 	fecha_fin TIMESTAMP NOT NULL,
-    ruta_material_didactico VARCHAR(1500),
+    ruta_material_didactico JSON,
     PRIMARY KEY (id_modulo),
     CONSTRAINT fk_modulos_id_curso FOREIGN KEY (id_curso) REFERENCES cat_cursos (id_curso)
 )  ENGINE=INNODB DEFAULT CHARSET=UTF8MB4;
@@ -100,7 +100,7 @@ CREATE TABLE actividades (
     ponderacion_actividad DECIMAL(10,2),
 	fecha_inicio TIMESTAMP NOT NULL,
 	fecha_fin TIMESTAMP NOT NULL,
-    ruta_actividad VARCHAR(1500),
+    ruta_actividad JSON,
     PRIMARY KEY (id_actividad),
     CONSTRAINT fk_actividades_id_modulo FOREIGN KEY (id_modulo) REFERENCES modulos (id_modulo)
 )  ENGINE=INNODB DEFAULT CHARSET=UTF8MB4;

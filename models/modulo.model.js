@@ -35,9 +35,9 @@ const Modulo = sequelize.define(
         allowNull:false
     },
     ruta_material_didactico: {
-        //type:DataTypes.ARRAY(DataTypes.STRING),
-        type:DataTypes.STRING,
-        allowNull:false
+        type:DataTypes.JSON,
+        //type:DataTypes.STRING,
+        //allowNull:false
     },   
 },
 {

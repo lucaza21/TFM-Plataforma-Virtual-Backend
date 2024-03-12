@@ -31,9 +31,10 @@ const Actividad = sequelize.define(
         allowNull:false
     },
     ruta_actividad: {
+        type:DataTypes.JSON,
         //type:DataTypes.ARRAY(DataTypes.STRING),
-        type:DataTypes.STRING,
-        allowNull:false
+        //type:DataTypes.STRING,
+        //allowNull:false
     },   
 },
 {
