@@ -1,5 +1,6 @@
 //import model
-const [DataTypes, sequelize] = require("../SQL/sql.connection.platvirt");
+const { uploadFolder, deleteImage, uploadImage, deleteAllImages, deleteFolder } = require("../cloudinary");
+const fs = require('fs-extra');
 
 const Actividad = require('../models/actividades.model')
 const CatCursos = require("../models/catcurso.model");
@@ -7,6 +8,8 @@ const Profesor = require("../models/profesor.model");
 const CursoAlumno = require("../models/curso_alumno.model");
 const Alumno = require("../models/alumno.model");
 const Modulo = require("../models/modulo.model");
+const Entrega = require("../models/entregas.model");
+
 
 module.exports.listar_actividad = (req, res, next) => {
     //console.log(req.body)
@@ -17,24 +20,13 @@ module.exports.listar_actividad = (req, res, next) => {
                 model: Modulo,
                 as:'modulos',
                 required:true,
-               /*  include:[
-                    {
-                        model:CursoAlumno,
-                        as:'curso_alumno'
-                    },
-                    {
-                        model:Alumno,
-                        as: 'alumno'
-                    }
-                ]  */  
+                attributes: ["id_modulo","nombre_modulo", "ruta_material_didactico"]
             }, 
             //attributes:['id_Actividad','id_curso','nombre_Actividad',], 
             //raw:true
         }
         ).then(response => {
-            //acceder valores dentro de la asociacion
-            //console.log(response[3].dataValues.cat_cursos.dataValues.titulo)
-            console.log(response)
+            //console.log(response)
             return res.status(200).json(response)
             //res.send("listando cursos desde SQL")
         })
@@ -46,18 +38,140 @@ module.exports.listar_actividad = (req, res, next) => {
 
 module.exports.crear_actividad = (req, res, next) => {
     //console.log(req.body)
+    const id_modulo = req.params.id
     const body = req.body;
+    body.id_modulo = id_modulo
     console.log(body)
 
-    //crear nuevo curso
-    Actividad.create(body)
-    .then((curso) => {
-        return res.status(201).json( { curso:curso } )
-    })
-    .catch((error) =>{
-        return res.status(400).json({ message: `Error creando Actividad: ${error.message}`});
-    })
+    //crear nueva Actividad
+    Modulo.findOne(
+        { 
+            where: {id_modulo: id_modulo},
+            attributes:['id_modulo','id_curso', 'nombre_modulo', 'ruta_material_didactico'],
+            raw: true 
+        }).then(modulo => {
+            //console.log("modulo: ",modulo)
+            found = modulo
+            if(modulo === null){
+                throw new Error("El modulo mencionado no existe")
+            }
+            return Actividad.findOne({where:{nombre_actividad: body.nombre_actividad, id_modulo:id_modulo}})
+        }).then(actividad => {
+            //console.log("found: ",found)
+            if(actividad !== null){
+                throw new Error("El nombre de la actividad mencionada Ya existe para ese modulo - Dos actividades no pueden llevar el mismo Titulo dentro del mismo modulo")
+            }
+            folder = found.ruta_material_didactico[0].folder
+            //console.log(`${folder}/${body.nombre_actividad}`)
+            return uploadFolder(`${folder}/${body.nombre_actividad}`, `${body.nombre_actividad}`)
+        }).then((responseUploader) => {
+            //console.log("responseUploader: ", responseUploader)
+            body.ruta_actividad = [{
+                public_id: responseUploader.public_id,
+                url: responseUploader.url,
+                folder: responseUploader.folder,
+                archivos: []
+            }]
+            return body
+        }).then(newActividad => {
+            console.log("newModulo: ",newActividad)
+            return Actividad.create(newActividad)
+        }).then(responseActividad => {
+            if(responseActividad === null){
+                throw new Error("No se pudo crear la actividad")
+            }
+            //console.log(responseActividad.ruta_actividad[0].public_id)
+            deleteImage(responseActividad.ruta_actividad[0].public_id)
+            return res.status(201).json( {message:' se ha creado la actividad', curso: responseActividad } )
+        }).catch((error) =>{
+            return res.status(400).json({ message: `Error creando la actividad: - ${error.name}: ${error.message}`});
+        })
+
+    /* Actividad.create(body)
+        .then((curso) => {
+            return res.status(201).json( { curso:curso } )
+        })
+        .catch((error) =>{
+            return res.status(400).json({ message: `Error creando Actividad: ${error.message}`});
+        }) */
      
+};
+
+module.exports.subirArchivos = (req, res, next) => {
+    const id = req.params.id
+    if (req.file == null) {
+        return res.status(400).json({Error: `Error subiendo el archivo - No se seleccionó ningún archivo. `});
+    }
+
+    oName = req.file.originalname.split('.')[0]
+    Actividad.findOne(
+        { 
+            where: {id_actividad: id},
+            attributes:['id_actividad','id_modulo', 'nombre_actividad', 'ruta_actividad'],
+            raw: true 
+        }).then(actividad => {
+            if(actividad === null){
+                throw new Error("La Actividad mencionada no existe")
+            }
+            data = actividad.ruta_actividad
+            ruta = actividad.ruta_actividad[0].folder
+            return uploadImage(req.file.path, ruta, oName)
+        }).then( uploadResponse => {
+            const existeUrl = data[0].archivos.some(archivo => archivo.url.includes(uploadResponse.url));
+            if(existeUrl){
+                throw new Error("Ya hay un archivo con ese nombre, los archivos no pueden tener el mismo nombre")
+            }
+            newArchivo = [{
+                url: data[0]?.url,
+                folder: data[0]?.folder,
+                public_id: data[0]?.public_id,
+                archivos: [...data[0]?.archivos, {fName:oName, url:uploadResponse.url}]
+            }]
+            fs.unlink(req.file.path)
+            return Actividad.update({ ruta_actividad : newArchivo},{
+                where: {id_actividad: id},
+                })
+        }).then(updated => {
+            if(updated == 0){
+                return res.status(400).json({message: "Registro no fue actualizado."});
+            }else{
+                return res.status(200).json({message: `Se ha subido el archivo ${req.file.originalname} a la carpeta ${ruta}`});
+            }
+        }).catch(error => {
+            fs.unlink(req.file.path)
+            return res.status(400).json({Error: `Error subiendo el archivo - ${error.name}: ${error.message}`});
+        })
+    };
+
+module.exports.eliminar_actividad = async (req, res, next) => {
+    const id = req.params.id
+    Actividad.findOne(
+        { 
+            where: {id_actividad: id},
+            attributes:['id_actividad','id_modulo', 'nombre_actividad', 'ruta_actividad'],
+            raw: true 
+        }).then(actividad => {
+            if(actividad === null){
+                throw new Error("La actividad mencionada no existe")
+            }
+            folder = actividad.ruta_actividad[0].folder
+            return deleteAllImages(folder)
+        }).then(response => {
+            return deleteFolder(folder)
+        }).then(response => {
+            Actividad.destroy({
+                where: {
+                        id_actividad: id
+                        }
+                })
+        })
+        .then(response => {
+            return res.status(200).json({message: `Se han eliminado todas los archivos del folder, el folder y la actividad ${folder} de la DDBB`});
+        })
+        .catch(error => {
+            return res.status(400).json({Error: `Error eliminando actividad - ${error.name}: ${error.message}`});
+        })     
+
 };
 
 module.exports.editar_actividad = (req, res, next) =>{
@@ -76,7 +190,7 @@ module.exports.editar_actividad = (req, res, next) =>{
     })
 };
 
-module.exports.eliminar_actividad =(req,res) =>{
+/* module.exports.eliminar_actividad =(req,res) =>{
     const id = req.params.id;
     Actividad.destroy({
         where: {id_actividad: id}
@@ -90,7 +204,7 @@ module.exports.eliminar_actividad =(req,res) =>{
     .catch((error) =>{
         return res.status(400).json({ message: `Error eliminando actividad: ${error.message}`});
     })
-};
+}; */
 
 module.exports.bulk_actividad = (req, res, next) => {
     let bulk = [

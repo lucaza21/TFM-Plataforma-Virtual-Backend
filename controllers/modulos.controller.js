@@ -7,6 +7,7 @@ const Profesor = require("../models/profesor.model");
 const CursoAlumno = require("../models/curso_alumno.model");
 const Alumno = require("../models/alumno.model");
 const catCursos = require("../models/catcurso.model");
+const Actividad = require("../models/actividades.model");
 
 
 module.exports.listar_modulo = (req, res, next) => {
@@ -14,7 +15,13 @@ module.exports.listar_modulo = (req, res, next) => {
     Modulo.findAll(   
         { 
             //where: {id_curso: 2 },
-            include: {
+            include: [
+                {
+                    model: Actividad,
+                    as:'actividades', 
+                    attributes: ["id_actividad","nombre_actividad", "ruta_actividad"] 
+                },
+                {
                 model: catCursos,
                 as:'cat_cursos',
                 required:true,
@@ -28,7 +35,7 @@ module.exports.listar_modulo = (req, res, next) => {
                         as: 'alumno'
                     }
                 ]   
-            }, 
+            }], 
             //attributes:['id_modulo','id_curso','nombre_modulo',], 
             //raw:true
         }
@@ -166,12 +173,9 @@ module.exports.subirArchivos = (req, res, next) => {
             attributes:['id_modulo','id_curso', 'nombre_modulo', 'ruta_material_didactico'],
             raw: true 
         }).then(modulo => {
-
             if(modulo === null){
                 throw new Error("El modulo mencionado no existe")
             }
-            return modulo
-        }).then(response =>{
             data = response.ruta_material_didactico
             ruta = response.ruta_material_didactico[0].folder
             return uploadImage(req.file.path, ruta, oName)
@@ -209,18 +213,18 @@ module.exports.eliminar_modulo = async (req, res, next) => {
             where: {id_modulo: id},
             attributes:['id_modulo','id_curso', 'nombre_modulo', 'ruta_material_didactico'],
             raw: true 
-        }).then(curso => {
-            if(curso === null){
-                throw new Error("El curso mencionado no existe")
+        }).then(modulo => {
+            if(modulo === null){
+                throw new Error("El modulo mencionado no existe")
             }
             //console.log(curso)
             //folder = JSON.parse(curso.ruta_material_didactico)[0].folder
             //public_id = JSON.parse(curso.ruta_material_didactico)[0].public_id
             //public_id = curso.ruta_material_didactico[0].public_id
-            folder = curso.ruta_material_didactico[0].folder
+            folder = modulo.ruta_material_didactico[0].folder
     
             return deleteAllImages(folder)
-        }).then(resposne => {
+        }).then(response => {
             return deleteFolder(folder)
         }).then(response => {
             Modulo.destroy({
@@ -230,10 +234,10 @@ module.exports.eliminar_modulo = async (req, res, next) => {
                 })
         })
         .then(response => {
-            return res.status(200).json({message: `Se han eliminado todas los archivos del folder, el folder y el curso ${folder} de la DDBB`});
+            return res.status(200).json({message: `Se han eliminado todas los archivos del folder, el folder y el modulo ${folder} de la DDBB`});
         })
         .catch(error => {
-            return res.status(400).json({Error: `Error eliminando curso - ${error.name}: ${error.message}`});
+            return res.status(400).json({Error: `Error eliminando modulo - ${error.name}: ${error.message}`});
         })     
 
 };
