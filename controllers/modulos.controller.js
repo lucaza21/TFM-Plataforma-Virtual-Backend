@@ -176,8 +176,8 @@ module.exports.subirArchivos = (req, res, next) => {
             if(modulo === null){
                 throw new Error("El modulo mencionado no existe")
             }
-            data = response.ruta_material_didactico
-            ruta = response.ruta_material_didactico[0].folder
+            data = modulo.ruta_material_didactico
+            ruta = modulo.ruta_material_didactico[0].folder
             return uploadImage(req.file.path, ruta, oName)
         }).then( uploadResponse => {
             const existeUrl = data[0].archivos.some(archivo => archivo.url.includes(uploadResponse.url));
