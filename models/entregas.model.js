@@ -23,8 +23,9 @@ const Entrega = sequelize.define(
         allowNull:false
     },
     ruta_entrega: {
+        type:DataTypes.JSON,
         //type:DataTypes.ARRAY(DataTypes.STRING),
-        type:DataTypes.STRING,
+        //type:DataTypes.STRING,
         allowNull:false
     },
     comentario_entrega: {

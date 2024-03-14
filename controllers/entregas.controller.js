@@ -1,5 +1,5 @@
-//import model
-const [DataTypes, sequelize] = require("../SQL/sql.connection.platvirt");
+const { uploadFolder, deleteImage, uploadImage, deleteAllImages, deleteFolder } = require("../cloudinary");
+const fs = require('fs-extra');
 
 const Actividad = require('../models/actividades.model')
 const CatCursos = require("../models/catcurso.model");
@@ -8,6 +8,7 @@ const CursoAlumno = require("../models/curso_alumno.model");
 const Alumno = require("../models/alumno.model");
 const Modulo = require("../models/modulo.model");
 const Entrega = require("../models/entregas.model");
+
 
 
 
@@ -53,18 +54,86 @@ module.exports.listar_entrega = (req, res, next) => {
 };
 
 module.exports.crear_entrega = (req, res, next) => {
-    //console.log(req.body)
-    const body = req.body;
-    console.log(body)
+
+    const id_alumno = req.params.id_alumno
+    const id_actividad = req.params.id_actividad
+    //const body = req.body;
+    console.log(req.file)
+    console.log(req.body)
+
+    if (req.file == null) {
+        return res.status(400).json({Error: `Error subiendo el archivo - No se seleccionó ningún archivo. `});
+    }
+
+    oName = req.file.originalname.split('.')[0]
+    Actividad.findOne(
+        { 
+            where: {id_actividad: id_actividad},
+            attributes:['id_actividad','id_modulo', 'nombre_actividad', 'ruta_actividad'],
+            raw: true 
+        }).then(actividad => {
+            if(actividad === null){
+                throw new Error("La Actividad mencionada no existe")
+            }
+            data = actividad.ruta_actividad
+            ruta = actividad.ruta_actividad[0].folder
+            return uploadImage(req.file.path, ruta, oName)
+        }).then( uploadResponse => {
+            const existeUrl = data[0].archivos.some(archivo => archivo.url.includes(uploadResponse.url));
+            if(existeUrl){
+                throw new Error("Ya hay una Actividad con ese nombre, las actividades no pueden tener el mismo nombre")
+            }
+            newArchivo = [{
+                url: data[0]?.url,
+                folder: data[0]?.folder,
+                public_id: data[0]?.public_id,
+                archivos: [...data[0]?.archivos, {fName:oName, url:uploadResponse.url}]
+            }]
+            fs.unlink(req.file.path)
+            return Actividad.update({ ruta_actividad : newArchivo},{
+                where: {id_actividad: id_actividad},
+                })
+        }).then(updated => {
+            if(updated == 0){
+                return res.status(400).json({message: "Registro no fue actualizado."});
+            }
+            
+            const id_actividad = 12
+            const id_alumno = 3
+            const fecha_entrega = new Date()
+            const comentario_entrega = req.body.coment
+            const ruta_entrega = [newArchivo[0].archivos[newArchivo[0].archivos.length -1]]
+
+            const newEntrega = {
+                id_actividad, 
+                id_alumno, 
+                fecha_entrega, 
+                comentario_entrega, 
+                ruta_entrega
+            }
+            console.log(newEntrega)
+            Entrega.create(newEntrega)
+        }).then(responsEntrega => {
+            if(responseEntrega=== null){
+                throw new Error("No se pudo crear la actividad")
+            }
+            return res.status(201).json( {message:`Se ha subido el archivo ${req.file.originalname} a la carpeta ${ruta}`, curso: responseActividad } )
+        }).catch(error => {
+            fs.unlink(req.file.path)
+            return res.status(400).json({Error: `Error subiendo el archivo - ${error.name}: ${error.message}`});
+        })
+
+
+    //console.log(body)
 
     //crear nuevo curso
-    Entrega.create(body)
+    /* Entrega.create(body)
     .then((curso) => {
         return res.status(201).json( { curso:curso } )
     })
     .catch((error) =>{
         return res.status(400).json({ message: `Error creando Entrega: ${error.message}`});
-    })
+    }) */
      
 };
 

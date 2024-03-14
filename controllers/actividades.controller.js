@@ -16,12 +16,26 @@ module.exports.listar_actividad = (req, res, next) => {
     Actividad.findAll(   
         { 
             //where: {id_curso: 2 },
-            include: {
-                model: Modulo,
-                as:'modulos',
-                required:true,
-                attributes: ["id_modulo","nombre_modulo", "ruta_material_didactico"]
-            }, 
+            include: [
+                {
+                    model: Modulo,
+                    as:'modulos',
+                    required:true,
+                    attributes: ["id_modulo","nombre_modulo", "ruta_material_didactico"]
+                },
+                {
+                    model: Entrega,
+                    as:'entrega_actividades',
+                    required:true,
+                    include:[
+                        {
+                            model:Alumno,
+                            as:'alumno',
+                            attributes: ["nombre","correo", "usuario"]
+                        },
+                    ]
+                }
+        ], 
             //attributes:['id_Actividad','id_curso','nombre_Actividad',], 
             //raw:true
         }

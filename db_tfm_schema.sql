@@ -111,7 +111,7 @@ CREATE TABLE entrega_actividades (
     id_actividad bigint NOT NULL,
     id_alumno bigint NOT NULL,
     fecha_entrega TIMESTAMP NOT NULL,
-    ruta_entrega VARCHAR(1500),
+    ruta_entrega JSON,
     comentario_entrega VARCHAR(500),
     PRIMARY KEY (id_entrega),
     CONSTRAINT fk_entrega_actividades_id_actividad FOREIGN KEY (id_actividad) REFERENCES actividades (id_actividad),
