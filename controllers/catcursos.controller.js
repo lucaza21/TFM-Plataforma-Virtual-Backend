@@ -7,6 +7,7 @@ const Alumno = require("../models/alumno.model");
 const catCursos = require("../models/catcurso.model");
 const CursoAlumno = require("../models/curso_alumno.model");
 const Modulo = require("../models/modulo.model");
+const Actividad = require("../models/actividades.model");
 
 
 module.exports.listar_catCursos = (req, res, next) => {
@@ -28,7 +29,14 @@ module.exports.listar_catCursos = (req, res, next) => {
                     {
                         model: Modulo,
                         as: 'modulos',
-                        attributes: ["id_modulo","nombre_modulo", "ruta_material_didactico"]    
+                        attributes: ["id_modulo","nombre_modulo", "ruta_material_didactico"],
+                        include:[
+                            {
+                            model: Actividad,
+                            as:'actividades', 
+                            attributes: ["id_actividad","nombre_actividad", "ruta_actividad"]
+                            }
+                        ]       
                     },
                 ], 
             }
