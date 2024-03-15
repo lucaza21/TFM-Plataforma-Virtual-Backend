@@ -76,22 +76,65 @@ module.exports.listar_profesor = (req, res, next) => {
      
 };
 
+module.exports.editar_profesor = (req, res, next) =>{
+    const id_profesor = req.params.id;
+    const body = req.body
+    
+    Profesor.findOne(
+        { 
+            where: {id_profesor: id_profesor}
+        }).then(profesor => {
+            if(profesor === null){
+                throw new Error("El profesor mencionado no existe")
+            }
+            return Profesor.update( body,
+                { 
+                    where: {id_profesor: id_profesor}
+                })
+        }).then(updated => {
+            if(updated == 0){
+                return res.status(400).json({message: "El profesor no fue actualizado."});
+            }else{
+                return res.status(200).json({message: `Se han editado los datos del Profesor ${body.usuario}`});
+            }
+        }).catch(error => {
+            return res.status(400).json({Error: `Error editando el profesor - ${error.name}: ${error.message}`});
+        }) 
+    /* Profesor.update(req.body, {
+        where:{id_profesor: id}
+    }).then(value =>{
+        if(value == 0){
+            return res.status(400).json({message: "No fue posible actualizar la actividad."});
+        }else{
+            return res.status(202).json({message: "La actividad fue actualizar."});
+        }
+    }).catch(error =>{
+        return res.status(500).json({message: "Error al actualizar actividad " + error.message});
+    }) */
+};
+
 module.exports.eliminar_profesor = (req, res, next) => {
-    const id = req.params.id
-    Profesor.destroy({
-        where: {
-                id: id 
-               }
+    const id_profesor = req.params.id;
+    Profesor.findOne(
+        { 
+            where: {id_profesor: id_profesor}
+        }).then(profesor => {
+            if(profesor === null){
+                throw new Error("El profesor mencionado no existe")
+            }
+            return Profesor.destroy({
+                where: {
+                        id_profesor: id_profesor 
+                       }
+        })
     }).then(rowDeleted => {
         if(rowDeleted === 0){
             return res.status(404).json({message: "profesor no existe"});
-        } else {
-            console.log("profesor eliminado")
-            return res.status(204).json();
-        }
+        } 
+        return res.status(204).json();
     }) // rowDeleted will return number of rows deleted
     .catch((error) =>{
-        return res.status(400).json({ message: `Error eliminando profesor: ${error.message}`});
+        return res.status(400).json({ message: `Error eliminando profesor - ${error.name}: ${error.message}`});
     })
 
 
@@ -142,80 +185,7 @@ module.exports.bulk = (req, res, next) => {
     
 };
 
-module.exports.editar_profesor = (req, res, next) =>{
-    const id_profesor = req.params.id;
-    const body = req.body
-    
-    Profesor.findOne(
-        { 
-            where: {id_profesor: id_profesor}
-        }).then(profesor => {
-            if(profesor === null){
-                throw new Error("El profesor mencionado no existe")
-            }
-            return Profesor.update( body,
-                { 
-                    where: {id_profesor: id_profesor}
-                })
-        }).then(updated => {
-            if(updated == 0){
-                return res.status(400).json({message: "El profesor no fue actualizado."});
-            }else{
-                return res.status(200).json({message: `Se han editado los datos del Profesor ${body.usuario}`});
-            }
-        }).catch(error => {
-            return res.status(400).json({Error: `Error editando el profesor - ${error.name}: ${error.message}`});
-        }) 
-    /* Profesor.update(req.body, {
-        where:{id_profesor: id}
-    }).then(value =>{
-        if(value == 0){
-            return res.status(400).json({message: "No fue posible actualizar la actividad."});
-        }else{
-            return res.status(202).json({message: "La actividad fue actualizar."});
-        }
-    }).catch(error =>{
-        return res.status(500).json({message: "Error al actualizar actividad " + error.message});
-    }) */
-};
-
 /*
-module.exports.detail = (req, res) => {
-    const id = req.params.id;
-    Post.findById(id)
-        .then((post)=>{
-            if(post){
-                return res.status(200).json(post);
-            } else{
-                return res.status(404).json({message: "Post doesnt exist"});
-            }
-        })
-        .catch((error) =>{
-            return res.status(400).json({ message: `Error listing post: ${error}`});
-        })
-}
-
-module.exports.update = (req, res) => {
-    const id = req.params.id;
-    const body = req.body;
-    Post.findByIdAndUpdate(id, body,{
-        new: true,
-        runValidators: true
-    })
-        .then((post)=>{
-            if(post){
-                return res.status(200).json(post);
-            } else{
-                return res.status(404).json({message: "Post doesnt exist"});
-            }
-        })
-        .catch((error) =>{
-            return res.status(400).json({ message: `Error updating post: ${error}`});
-        })
-}
-
-
-
 //-------------------------------------------------------------------------------------------
 module.exports.filter = (req, res) => {
 
