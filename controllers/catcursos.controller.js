@@ -108,7 +108,9 @@ module.exports.bulk_catCursos = (req, res, next) => {
 }; 
 
 module.exports.crear_catCursos = async (req, res, next) => {
+    const id_profesor = req.params.id
     const body = req.body;
+    body.id_profesor = id_profesor
     catCursos.findOne(
         { 
             where: {titulo: body.titulo},
