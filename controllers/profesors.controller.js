@@ -1,4 +1,5 @@
 //import model
+const { where } = require("sequelize");
 const [DataTypes, sequelize] = require("../SQL/sql.connection.platvirt");
 const CatCurso = require("../models/catcurso.model");
 const Profesor = require("../models/profesor.model");
@@ -139,6 +140,43 @@ module.exports.bulk = (req, res, next) => {
         return res.status(400).json({ message: `Error creando profesores: ${error.message}`});
     })
     
+};
+
+module.exports.editar_profesor = (req, res, next) =>{
+    const id_profesor = req.params.id;
+    const body = req.body
+    
+    Profesor.findOne(
+        { 
+            where: {id_profesor: id_profesor}
+        }).then(profesor => {
+            if(profesor === null){
+                throw new Error("El profesor mencionado no existe")
+            }
+            return Profesor.update( body,
+                { 
+                    where: {id_profesor: id_profesor}
+                })
+        }).then(updated => {
+            if(updated == 0){
+                return res.status(400).json({message: "El profesor no fue actualizado."});
+            }else{
+                return res.status(200).json({message: `Se han editado los datos del Profesor ${body.usuario}`});
+            }
+        }).catch(error => {
+            return res.status(400).json({Error: `Error editando el profesor - ${error.name}: ${error.message}`});
+        }) 
+    /* Profesor.update(req.body, {
+        where:{id_profesor: id}
+    }).then(value =>{
+        if(value == 0){
+            return res.status(400).json({message: "No fue posible actualizar la actividad."});
+        }else{
+            return res.status(202).json({message: "La actividad fue actualizar."});
+        }
+    }).catch(error =>{
+        return res.status(500).json({message: "Error al actualizar actividad " + error.message});
+    }) */
 };
 
 /*
