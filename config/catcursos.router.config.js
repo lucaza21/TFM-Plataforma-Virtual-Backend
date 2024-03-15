@@ -11,7 +11,6 @@ const upload = multer({ dest: 'uploads/' });
 
 router.get("/listar", catCursos.listar_catCursos);
 router.get("/bulk", catCursos.bulk_catCursos);
-//router.post("/crear", catCursos.crear_catCursos);
 router.post("/crear", catCursos.crear_catCursos);
 router.post("/subir/:id", upload.single('file'), catCursos.subirArchivos);
 router.put("/editar/:id", catCursos.editar_catcurso);

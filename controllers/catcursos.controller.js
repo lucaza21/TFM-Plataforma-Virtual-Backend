@@ -119,29 +119,27 @@ module.exports.crear_catCursos = async (req, res, next) => {
             }
             return uploadFolder(body.titulo, "un_nombre")
         }).then((result) => {
-            
             body.ruta_material_didactico = [{
                 public_id: result.public_id,
                 url: result.url,
                 folder: `${body.titulo}/`
             }]
-            return body
-        }).then(newCurso => {
-            //console.log(response)
-            //console.log(newCurso)
-            return catCursos.create(newCurso)
+            return catCursos.create(body)
         }).then(response => {
+            curso_creado = response
             if(response === null){
                 throw new Error("No se pudo crear el curso")
             }
-            //console.log(response.dataValues)
-            deleteImage(response.ruta_material_didactico[0].public_id)
-            return res.status(201).json( {message:' se ha creado el curso', curso: response } )
+            return deleteImage(response.ruta_material_didactico[0].public_id)
+        }).then(responseDelete => {
+            //console.log(responseDelete)
+            if(responseDelete.result !== "ok"){
+                throw new Error("No se pudo crear el curso en cloudinary")
+            }
+            return res.status(201).json( {message:'Se ha creado el curso', curso: curso_creado } )
         }).catch((error) =>{
             return res.status(400).json({ message: `Error creando curso: - ${error.name}: ${error.message}`});
         })
-
-    
 };
 
 module.exports.subirArchivos = async (req, res, next) => {
@@ -165,6 +163,9 @@ module.exports.subirArchivos = async (req, res, next) => {
                 return uploadImage(req.file.path, ruta, oName)
             }).then(response => {
                 //console.log(response)
+                if(response == null){
+                    throw new Error("No se pudo subir el archivo")
+                }
                 fs.unlink(req.file.path)
                 return response
             }).then(response =>{
@@ -187,6 +188,46 @@ module.exports.subirArchivos = async (req, res, next) => {
             return res.status(400).json({Error: `Error subiendo el archivo - si seleccionó un archivo? `});
         }
     //
+};
+
+module.exports.editar_catcurso = (req, res )=>{
+
+    const id_curso = req.params.id;
+    const body = req.body
+
+    catCursos.findOne(
+        { 
+            where: {id_curso: id_curso}
+        }).then(curso => {
+            if(curso === null){
+                throw new Error("El curso mencionado no existe")
+            }
+            return catCursos.update( body,
+                { 
+                    where: {id_curso: id_curso}
+                })
+        }).then(updated => {
+            if(updated == 0){
+                return res.status(400).json({message: "El curso no fue actualizado."});
+            }else{
+                return res.status(200).json({message: `Se han editado los datos del curso ${body.titulo}`});
+            }
+        }).catch(error => {
+            return res.status(400).json({Error: `Error editando el curso - ${error.name}: ${error.message}`});
+        }) 
+    /* catCursos.update(req.body, {
+        where: {
+            id_curso: id
+        },
+    }).then(updated =>{
+        if(updated == 0){
+            return res.status(400).json({message: "Registro no fue actualizado."});
+        }else{
+            return res.status(200).json({message: "El curso fue actualizado correctamente.", updated});
+        }
+    }).catch( error =>{
+        return res.status(500).json({message: "Error actualizando Curso: " + error.message});
+    }); */
 };
 
 module.exports.eliminar_catCursos = async (req, res, next) => {
@@ -238,7 +279,7 @@ module.exports.eliminar_catCursos = async (req, res, next) => {
         })
         .then(response => {
             console.log(response)
-            return res.status(200).json({message: `Se han eliminado todas los archivos del folder, el folder en claudinary, los modulos del curso y el curso ${folder} de la DDBB`});
+            return res.status(200).json({message: `Se han eliminado todas los archivos del folder, el folder en cloudinary, los modulos del curso y el curso ${folder} de la DDBB`});
         })
         .catch(error => {
             return res.status(400).json({Error: `Error eliminando curso - ${error.name}: ${error.message}`});
@@ -246,22 +287,5 @@ module.exports.eliminar_catCursos = async (req, res, next) => {
 
 };
 
-module.exports.editar_catcurso = (req, res )=>{
 
-    const id = req.params.id;
-
-    catCursos.update(req.body, {
-        where: {
-            id_curso: id
-        },
-    }).then(updated =>{
-        if(updated == 0){
-            return res.status(400).json({message: "Registro no fue actualizado."});
-        }else{
-            return res.status(200).json({message: "El curso fue actualizado correctamente.", updated});
-        }
-    }).catch( error =>{
-        return res.status(500).json({message: "Error actualizando Curso: " + error.message});
-    });
-};
     
