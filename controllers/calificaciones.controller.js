@@ -11,8 +11,6 @@ const Entrega = require("../models/entregas.model");
 const Actividad = require("../models/actividades.model");
 
 
-
-
 module.exports.listar_calificacion = (req, res, next) => {
     //console.log(req.body)
     Calificacion.findAll(   
@@ -21,7 +19,7 @@ module.exports.listar_calificacion = (req, res, next) => {
             include: {
                 model: Entrega,
                 as:'entrega_actividades',
-                required:true,
+                //required:true,
                 include:[
                     {
                         model:Alumno,

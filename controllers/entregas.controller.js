@@ -8,6 +8,7 @@ const CursoAlumno = require("../models/curso_alumno.model");
 const Alumno = require("../models/alumno.model");
 const Modulo = require("../models/modulo.model");
 const Entrega = require("../models/entregas.model");
+const Calificacion = require("../models/calificaciones.model");
 
 
 
@@ -21,22 +22,16 @@ module.exports.listar_entrega = (req, res, next) => {
                 {
                 model: Actividad,
                 as:'actividades',
-                required:true,
-                /*include:[
-                    {
-                        model:Alumno,
-                        as:'alumno'
-                    },
-                     {
-                        model:Alumno,
-                        as: 'alumno'
-                    } 
-                ]*/
                 }, 
                 {
                     model:Alumno,
                     as:'alumno'
-                }
+                },
+                {
+                    model: Calificacion,
+                    as: 'calificaciones',
+                    attributes:['calificacion'],
+                },
             ],
             //attributes:['id_Actividad','id_curso','nombre_Actividad',], 
             raw:true
@@ -59,8 +54,8 @@ module.exports.crear_entrega = (req, res, next) => {
     const id_alumno = req.params.id_alumno
     const id_actividad = req.params.id_actividad
     //const body = req.body;
-    console.log(req.file)
-    console.log(req.body)
+    //console.log(req.file)
+    //console.log(req.body)
 
     if (req.file == null) {
         return res.status(400).json({Error: `Error subiendo el archivo - No se seleccionó ningún archivo. `});
@@ -80,7 +75,7 @@ module.exports.crear_entrega = (req, res, next) => {
             ruta = actividad.ruta_actividad[0].folder
             return uploadImage(req.file.path, ruta, oName)
         }).then( uploadResponse => {
-            console.log(uploadResponse)
+            //console.log(uploadResponse)
             const existeUrl = data[0].archivos.some(archivo => archivo.url.includes(uploadResponse.url));
             if(existeUrl){
                 throw new Error("Ya hay una Actividad con ese nombre, las actividades no pueden tener el mismo nombre")
@@ -180,9 +175,9 @@ module.exports.eliminar_entrega = (req, res, next) => {
             fName = entrega.ruta_entrega[0].fName
             pId = entrega.ruta_entrega[0].pId
             folder = entrega.ruta_entrega[1].folder
-            console.log(folder)
-            console.log(fName)
-            console.log(pId)
+            //console.log(folder)
+            //console.log(fName)
+            //console.log(pId)
             return deleteImage(pId)
         }).then(response => {
             Entrega.destroy({

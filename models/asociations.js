@@ -91,17 +91,19 @@ Actividad.belongsTo(Modulo, {
 
 // one-to-one
 //query desde Actividades - Entregas
+Actividad.hasOne(Entrega, {
+  foreignKey: "id_actividad",
+  as: 'entrega_actividades',
+  onDelete: "cascade",
+});
+
 Entrega.belongsTo(Actividad,{
   foreignKey: "id_actividad",
   as: 'actividades',
   onDelete: "cascade",
 });
 
-Actividad.belongsTo(Entrega, {
-  foreignKey: "id_actividad",
-  as: 'entrega_actividades',
-  onDelete: "cascade",
-});
+
 
 //query desde Alumnos - Entregas
 Alumno.hasMany(Entrega, {
@@ -117,7 +119,7 @@ Entrega.belongsTo(Alumno,{
 
 // one-to-one
 //query desde Entregas - Calificaciones
-Entrega.belongsTo(Calificacion,{
+Entrega.hasOne(Calificacion,{
   foreignKey: "id_entrega",
   as: 'calificaciones',
   onDelete: "cascade",

@@ -9,6 +9,7 @@ const CursoAlumno = require("../models/curso_alumno.model");
 const Alumno = require("../models/alumno.model");
 const Modulo = require("../models/modulo.model");
 const Entrega = require("../models/entregas.model");
+const Calificacion = require("../models/calificaciones.model");
 
 
 module.exports.listar_actividad = (req, res, next) => {
@@ -20,7 +21,7 @@ module.exports.listar_actividad = (req, res, next) => {
                 {
                     model: Modulo,
                     as:'modulos',
-                    required:true,
+                    //required:true,
                     attributes: ["id_modulo","nombre_modulo", "ruta_material_didactico"]
                 },
                 {
@@ -33,6 +34,10 @@ module.exports.listar_actividad = (req, res, next) => {
                             as:'alumno',
                             attributes: ["nombre","correo", "usuario"]
                         },
+/*                         {
+                            model: Calificacion,
+                            as: 'calificaciones',
+                        }, */
                     ]
                 }
         ], 

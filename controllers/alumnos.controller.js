@@ -5,6 +5,10 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const CatCurso = require("../models/catcurso.model");
 const Alumno = require("../models/alumno.model");
+const Entrega = require("../models/entregas.model");
+const Calificacion = require("../models/calificaciones.model");
+const Actividad = require("../models/actividades.model");
+
 
 module.exports.crear_alumno = (req, res, next) => {
     bcrypt.hash(req.body.password, 10).then((hash) =>{
@@ -53,16 +57,30 @@ module.exports.login_alumnos = (req, res) => {
 module.exports.listar_alumnos = (req, res, next) => {
     //console.log(req.body)
     Alumnos.findAll(
-        { 
-            include:
-            {
-                model: CatCurso,
-                as: 'cat_cursos',
-                   
-            },
-            attributes:['id_alumno', 'nombre', 'ap_paterno', 'ap_materno', 'correo', 'celular', 'fecha_registro',
-                        'usuario','password','status'], raw:true}
-        ).then(response => {
+        {
+            include:[
+                {
+                    model: CatCurso,
+                    as: 'cat_cursos',
+                    attributes:['titulo']   
+                },
+                {
+                    model: Entrega,
+                    as: 'entrega_actividades',
+                    attributes:['fecha_entrega'],
+                    include:[
+                        {
+                            model: Calificacion,
+                            as: 'calificaciones',
+                            attributes:['calificacion'],
+                        },
+
+                    ]   
+                },
+
+            ],
+            raw:true
+        }).then(response => {
             //console.log(response)
             return res.status(200).json(response)
             //res.send("listando alumnos desde SQL")
