@@ -157,7 +157,7 @@ module.exports.crear_modulo = (req, res, next) => {
 };
 
 module.exports.subirArchivos = (req, res, next) => {
-    const id = req.params.id
+    const id_modulo = req.params.id
     if (req.file == null) {
         return res.status(400).json({Error: `Error subiendo el archivo - No se seleccionó ningún archivo. `});
     }
@@ -165,7 +165,7 @@ module.exports.subirArchivos = (req, res, next) => {
     oName = req.file.originalname.split('.')[0]
     Modulo.findOne(
         { 
-            where: {id_modulo: id},
+            where: {id_modulo: id_modulo},
             attributes:['id_modulo','id_curso', 'nombre_modulo', 'ruta_material_didactico'],
             raw: true 
         }).then(modulo => {
