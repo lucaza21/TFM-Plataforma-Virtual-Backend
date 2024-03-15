@@ -135,28 +135,24 @@ module.exports.crear_modulo = (req, res, next) => {
                 folder: result.folder,
                 archivos: []
             }]
-            return body
-        }).then(newModulo => {
-            console.log("newModulo: ",newModulo)
-            return Modulo.create(newModulo)
+            return Modulo.create(body)
         }).then(response => {
+            console.log(response)
+            modulo_creado = response
             if(response === null){
                 throw new Error("No se pudo crear el modulo")
             }
             //console.log(response.dataValues)
-            deleteImage(response.ruta_material_didactico[0].public_id)
-            return res.status(201).json( {message:' se ha creado el modulo', curso: response } )
+            return deleteImage(response.ruta_material_didactico[0].public_id)
+        }).then(responseDelete => {
+            console.log(responseDelete)
+            if(responseDelete.result !== "ok"){
+                throw new Error("No se pudo crear el modulo en cloudinary")
+            }
+            return res.status(201).json( {message:' Se ha creado el modulo', modulo: modulo_creado })
         }).catch((error) =>{
             return res.status(400).json({ message: `Error creando modulo: - ${error.name}: ${error.message}`});
         })
-        
-    /* Modulo.create(body)
-    .then((curso) => {
-        return res.status(201).json( { curso:curso } )
-    })
-    .catch((error) =>{
-        return res.status(400).json({ message: `Error creando modulo: ${error.message}`});
-    }) */
      
 };
 
@@ -180,16 +176,23 @@ module.exports.subirArchivos = (req, res, next) => {
             ruta = modulo.ruta_material_didactico[0].folder
             return uploadImage(req.file.path, ruta, oName)
         }).then( uploadResponse => {
+
+            if(uploadResponse == null){
+                throw new Error("No se pudo subir el archivo")
+            }
+
             const existeUrl = data[0].archivos.some(archivo => archivo.url.includes(uploadResponse.url));
             if(existeUrl){
                 throw new Error("Ya hay un archivo con ese nombre, los archivos no pueden tener el mismo nombre")
             }
+
             newArchivo = [{
                 url: data[0]?.url,
                 folder: data[0]?.folder,
                 public_id: data[0]?.public_id,
                 archivos: [...data[0]?.archivos, {fName:oName, url:uploadResponse.url}]
             }]
+
             fs.unlink(req.file.path)
             return Modulo.update({ ruta_material_didactico : newArchivo},{
                 where: {id_modulo: id},
@@ -206,11 +209,40 @@ module.exports.subirArchivos = (req, res, next) => {
         })
     };
 
-module.exports.eliminar_modulo = async (req, res, next) => {
-    const id = req.params.id
+module.exports.editar_modulo = (req, res )=>{
+
+    const id_modulo = req.params.id;
+    body = req.body
+    //console.log(body)
+    //archivos = body.ruta_material_didactico[0].archivos
+
     Modulo.findOne(
         { 
-            where: {id_modulo: id},
+            where: {id_modulo: id_modulo}
+        }).then(modulo => {
+            if(modulo === null){
+                throw new Error("El modulo mencionado no existe")
+            }
+            return Modulo.update( body,
+                { 
+                    where: {id_modulo: id_modulo}
+                })
+        }).then(updated =>{
+            if(updated == 0){
+                return res.status(400).json({message: "Registro no fue actualizado."});
+            }else{
+                return res.status(200).json({message: `Se han editado los datos del modulo ${body.nombre_modulo}`});
+            }
+    }).catch( error =>{
+        return res.status(500).json({message: `Error editando el modulo - ${error.name}: ${error.message}`});
+    });
+};
+
+module.exports.eliminar_modulo = async (req, res, next) => {
+    const id_modulo = req.params.id
+    Modulo.findOne(
+        { 
+            where: {id_modulo: id_modulo},
             attributes:['id_modulo','id_curso', 'nombre_modulo', 'ruta_material_didactico'],
             raw: true 
         }).then(modulo => {
@@ -229,7 +261,7 @@ module.exports.eliminar_modulo = async (req, res, next) => {
         }).then(response => {
             Modulo.destroy({
                 where: {
-                        id_modulo: id
+                        id_modulo: id_modulo
                         }
                 })
         })
@@ -242,35 +274,5 @@ module.exports.eliminar_modulo = async (req, res, next) => {
 
 };
 
-module.exports.editar_modulo = (req, res )=>{
 
-    const id = req.params.id;
-    body = req.body
-    console.log(body)
-    archivos = body.ruta_material_didactico[0].archivos
-    Modulo.update({
-        ruta_material_didactico:
-        [
-            {
-              url: 'http://res.cloudinary.com/dm9hihcwt/image/upload/v1710209185/INTRO%20REACT/modulo%201/modulo%201.pdf',
-              folder: 'INTRO REACT/modulo 1',
-              //archivos: ["hola" ,"2", "http.pdf"],
-              archivos: [],
-              public_id: 'INTRO REACT/modulo 1/modulo 1'
-            }
-          ]
-        }, {
-        where: {
-            id_modulo: id
-        },
-    }).then(updated =>{
-        if(updated == 0){
-            return res.status(400).json({message: "Registro no fue actualizado."});
-        }else{
-            return res.status(200).json({message: "El modulo fue actualizado correctamente.", updated});
-        }
-    }).catch( error =>{
-        return res.status(500).json({message: "Error actualizando Modulo: " + error.message});
-    });
-};
 
