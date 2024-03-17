@@ -57,7 +57,40 @@ module.exports.crear_modulo = (req, res, next) => {
     .catch((error) =>{
         return res.status(400).json({ message: `Error creando modulo: ${error.message}`});
     })
-     
+};
+
+module.exports.editar_modulo = (req, res, next) =>{
+    const id = req.params.id;
+
+    Modulo.update(req.body,{
+        where:{id_modulo: id}
+    }).then(value => {
+        if(value == 0){
+            return res.status(400).json({message:"Modulo no fue actualizado"})
+        }else{
+            return res.status(202).json({message: "Datos del Modulo fueron actualizado."});
+        }
+    }).catch(error =>{
+        return res.status(500).json({message: "Error actualizando Modulo "+ error.message});
+    });
+};
+
+module.exports.eliminar_modulo = (req, res, next) => {
+    const id = req.params.id
+    Modulo.destroy({
+        where: {
+                id_modulo: id 
+               }
+    }).then(rowDeleted => {
+        if(rowDeleted === 0){
+            return res.status(404).json({message: "Modulo no existe"});
+        } else {
+            return res.status(200).json({message: "Modulo eliminado"});
+        }
+    }) // rowDeleted will return number of rows deleted
+    .catch((error) =>{
+        return res.status(400).json({ message: `Error eliminando Modulo: ${error.message}`});
+    })
 };
 
 module.exports.bulk_modulo = (req, res, next) => {

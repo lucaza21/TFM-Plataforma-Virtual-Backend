@@ -75,6 +75,22 @@ module.exports.listar_profesor = (req, res, next) => {
      
 };
 
+module.exports.editar_profesor =(req, res, next) =>{
+    const id = req.params.id;
+
+    Profesor.update(req.body,{
+        where:{id_profesor: id}
+    }).then(value => {
+        if(value == 0){
+            return res.status(400).json({message:"Profesor no fue actualizado"})
+        }else{
+            return res.status(202).json({message: "Datos del Profesor fueron actualizado."});
+        }
+    }).catch(error =>{
+        return res.status(500).json({message: "Error actualizando Profesor "+ error.message});
+    });
+};
+
 module.exports.eliminar_profesor = (req, res, next) => {
     const id = req.params.id
     Profesor.destroy({
