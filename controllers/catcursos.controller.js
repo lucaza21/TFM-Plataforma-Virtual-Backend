@@ -51,6 +51,51 @@ module.exports.listar_catCursos = (req, res, next) => {
      
 };
 
+module.exports.detalle_catCursos = (req, res, next) => {
+    //console.log(req.body)
+    const id_curso = req.params.id
+    catCursos.findOne(
+        { 
+            where: {id_curso: id_curso},
+            //raw: true,
+            include:
+                [
+                    {
+                        model: Profesor,
+                        as: 'profesor',
+                        attributes: ["nombre", "ap_paterno"]    
+                    },
+                    {
+                        model: Alumno,
+                        as: 'alumno',
+                        attributes: ["nombre", "ap_paterno"]    
+                    },
+                    {
+                        model: Modulo,
+                        as: 'modulos',
+                        attributes: ["id_modulo","nombre_modulo", "ruta_material_didactico"],
+                        include:[
+                            {
+                            model: Actividad,
+                            as:'actividades', 
+                            attributes: ["id_actividad","nombre_actividad", "ruta_actividad"]
+                            }
+                        ]       
+                    },
+                ], 
+            }
+        ).then(curso => {
+            if(curso === null){
+                throw new Error("El curso mencionado no existe")
+            }
+            
+            return res.status(200).json(curso)
+        }).catch((error) => {
+            return res.status(400).json({message: `Error listando cursos - ${error.name}: ${error.message}`});
+        });
+     
+};
+
 module.exports.bulk_catCursos = (req, res, next) => {
     let cursos = [
             {

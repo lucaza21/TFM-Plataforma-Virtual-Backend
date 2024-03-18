@@ -26,55 +26,104 @@ module.exports.listar_curso_alumno = (req, res, next) => {
      
 };
 
+
 module.exports.crear_curso_alumno = (req, res, next) => {
     //console.log(req.body)
+    const id_curso = req.params.id_curso
+    const id_alumno = req.params.id_alumno
     const body = req.body;
+    body.id_curso = id_curso
+    body.id_alumno = id_alumno
     console.log(body)
 
-    //crear nuevo curso
-    CursoAlumno.create(body)
-    .then((curso) => {
-        return res.status(201).json( { curso:curso } )
-    })
-    .catch((error) =>{
-        return res.status(400).json({ message: `Error creando curso: ${error.message}`});
-    })
+    CursoAlumno.findOne(
+        { 
+            where: {id_curso: id_curso},
+            //raw: true 
+        }).then(curso => {
+            console.log("cuso: ",curso)
+            if(curso === null){
+                throw new Error("El curso mencionado no existe")
+            }
+            return Alumno.findOne({where:{id_alumno:id_alumno}})
+        }).then(alumno => {
+            console.log("alumno: ",alumno)
+            if(alumno === null){
+                throw new Error("El alumno mencionado no existe")
+            }
+            return CursoAlumno.create(body)
+        }).then((curso_alumno) => {
+            return res.status(201).json( {message:' Se ha creado el curso_alumno', curso_alumno:curso_alumno } )
+        })
+        .catch((error) =>{
+            return res.status(400).json({ message: `Error creando el curso_alumno: ${error.message}`});
+        })
 
 };
 
 module.exports.editar_curso_alumno =(req, res, next) =>{
-    const id = req.params.id;
+    const id_curso = req.params.id_curso
+    const id_alumno = req.params.id_alumno
+    const body = req.body;
+    body.id_curso = id_curso
+    body.id_alumno = id_alumno
+    console.log(body)
 
-    CursoAlumno.update(req.body,{
-        where:{id_curso_alumno: id}
-    }).then(value => {
-        if(value == 0){
-            return res.status(400).json({message:"Curso Alumno no fue actualizado"})
-        }else{
-            return res.status(202).json({message: "Curso alumno fueron actualizado."});
-        }
-    }).catch(error =>{
-        return res.status(500).json({message: "Error actualizando Curso Alumno "+ error.message});
-    });
-
+    CursoAlumno.findOne(
+        { 
+            where: {id_curso: id_curso},
+            //raw: true 
+        }).then(curso => {
+            console.log("cuso: ",curso)
+            if(curso === null){
+                throw new Error("El curso mencionado no existe")
+            }
+            return Alumno.findOne({where:{id_alumno:id_alumno}})
+        }).then(alumno => {
+            console.log("alumno: ",alumno)
+            if(alumno === null){
+                throw new Error("El alumno mencionado no existe")
+            }
+            return CursoAlumno.update(body,{
+                where:{id_alumno:id_alumno,id_curso: id_curso}})
+        }).then(updated =>{
+            if(updated == 0){
+                return res.status(400).json({message: "Registro no fue actualizado."});
+            }else{
+                return res.status(200).json({message: `Se han editado los datos del catcurso`});
+            }
+        }).catch((error) =>{
+            return res.status(400).json({ message: `Error editando el cat_curso: ${error.message}`});
+        })
 };
 
 module.exports.eliminar_curso_alumno = (req, res, next) => {
-    const id = req.params.id
-    CursoAlumno.destroy({
-        where: {
-            id_curso_alumno: id 
-               }
-    }).then(rowDeleted => {
-        if(rowDeleted === 0){
-            return res.status(404).json({message: "Curso alumno no existe"});
-        } else {
-            return res.status(200).json({message: "Curso alumno eliminado"});
-        }
-    }) // rowDeleted will return number of rows deleted
-    .catch((error) =>{
-        return res.status(400).json({ message: `Error eliminando curso alumno: ${error.message}`});
-    })
+    const id_curso = req.params.id_curso
+    const id_alumno = req.params.id_alumno
+    CursoAlumno.findOne(
+        { 
+            where: {id_curso: id_curso},
+            //raw: true 
+        }).then(curso => {
+            console.log("cuso: ",curso)
+            if(curso === null){
+                throw new Error("El curso mencionado no existe")
+            }
+            return Alumno.findOne({where:{id_alumno:id_alumno}})
+        }).then(alumno => {
+            console.log("alumno: ",alumno)
+            if(alumno === null){
+                throw new Error("El alumno mencionado no existe")
+            }
+            return CursoAlumno.destroy({
+                where:{id_alumno:id_alumno,id_curso: id_curso}})
+        }).then((curso_alumno) => {
+            return res.status(201).json( {message:' Se ha eliminando el curso_alumno', curso_alumno:curso_alumno } )
+        })
+        .catch((error) =>{
+            return res.status(400).json({ message: `Error edliminando el curso_alumno: ${error.message}`});
+        })
+
 };
 
  module.exports.bulk_curso_alumno = (req, res, next) => {

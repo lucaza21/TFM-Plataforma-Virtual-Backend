@@ -4,13 +4,6 @@ const cors = require('cors')
 //const fileUpload = require('express-fileupload')
 
 
-//import SQL-db-config
-//require("./SQL/sql.connection.sakila");
-
-//import sakila router
-//const sakila_router = require("./config/sakila.router.config");
-//app.use(sakila_router);
-
 app.use((req,res,next) => {
     console.log("request received: ", req.method, req.path)
     next();
@@ -18,8 +11,14 @@ app.use((req,res,next) => {
 
 //allow dotenv
 require('dotenv').config()
-//allow CORS
-app.use(cors())
+
+//allow CORS from FrontEnd
+app.use(
+    cors({
+      origin: 'http://localhost:3000',
+      credentials: true,
+    })
+  );
 //allow body data
 app.use(express.json());
 //allow upload Files
