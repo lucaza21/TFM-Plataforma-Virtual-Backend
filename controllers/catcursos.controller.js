@@ -220,7 +220,7 @@ module.exports.subirArchivos = async (req, res, next) => {
             return response
         }).then(response =>{
             return catCursos.update({ insumos: response.url},{
-                where: {id_curso: id},
+                where: {id_curso: id_curso},
                 })
         }).then(updated => {
             //console.log(updated)
@@ -300,7 +300,7 @@ module.exports.eliminar_catCursos = async (req, res, next) => {
             folder = curso.ruta_material_didactico[0].folder
             public_id = curso.ruta_material_didactico[0].public_id
 
-            id_modulos = curso.modulos.map(id => id. id_modulo)
+            id_modulos = curso.modulos.map(id => id.id_modulo)
             console.log(id_modulos)
             
             return deleteAllImages(folder)
@@ -319,7 +319,7 @@ module.exports.eliminar_catCursos = async (req, res, next) => {
             console.log(response)
             return catCursos.destroy({
                 where: {
-                        id_curso: id
+                        id_curso: id_curso
                         }
                 })
         })

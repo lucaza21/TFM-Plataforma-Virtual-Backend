@@ -1,5 +1,5 @@
 //import model
-const { uploadFolder, uploadImage, deleteImage, deleteAllImages, deleteFolder } = require("../cloudinary");
+const { uploadFolder, uploadImage, deleteImage, deleteAllImages, deleteFolder, uploadVideo } = require("../cloudinary");
 const fs = require('fs-extra');
 
 const Modulo = require('../models/modulo.model')
@@ -47,6 +47,90 @@ module.exports.listar_modulo = (req, res, next) => {
         })
         .catch((error) => {
             return res.status(400).json({message: `Error listando modulo : ${error.message}`});
+        });
+     
+};
+
+module.exports.detalle_modulo = (req, res, next) => {
+    //console.log(req.body)
+    const id_modulo = req.params.id
+    Modulo.findOne(
+        { 
+            where: {id_modulo: id_modulo},
+            //attributes:['id_modulo','id_curso','nombre_modulo',], 
+            //raw:true
+            include: [
+                {
+                    model: Actividad,
+                    as:'actividades', 
+                    attributes: ["id_actividad","nombre_actividad", "ruta_actividad"] 
+                },
+                {
+                model: catCursos,
+                as:'cat_cursos',
+                required:true,
+                include:[
+                    {
+                        model:CursoAlumno,
+                        as:'curso_alumno'
+                    },
+                    {
+                        model:Alumno,
+                        as: 'alumno'
+                    }
+                ]   
+            }],  
+            }
+        ).then(curso => {
+            if(curso === null){
+                throw new Error("El curso mencionado no existe")
+            }
+            
+            return res.status(200).json(curso)
+        }).catch((error) => {
+            return res.status(400).json({message: `Error listando cursos - ${error.name}: ${error.message}`});
+        });
+     
+};
+
+module.exports.detalle_modulo = (req, res, next) => {
+    //console.log(req.body)
+    const id_modulo = req.params.id
+    Modulo.findOne(
+        { 
+            where: {id_modulo: id_modulo},
+            //attributes:['id_modulo','id_curso','nombre_modulo',], 
+            //raw:true
+            include: [
+                {
+                    model: Actividad,
+                    as:'actividades', 
+                    attributes: ["id_actividad","nombre_actividad", "ruta_actividad"] 
+                },
+                {
+                model: catCursos,
+                as:'cat_cursos',
+                required:true,
+                include:[
+                    {
+                        model:CursoAlumno,
+                        as:'curso_alumno'
+                    },
+                    {
+                        model:Alumno,
+                        as: 'alumno'
+                    }
+                ]   
+            }],  
+            }
+        ).then(curso => {
+            if(curso === null){
+                throw new Error("El curso mencionado no existe")
+            }
+            
+            return res.status(200).json(curso)
+        }).catch((error) => {
+            return res.status(400).json({message: `Error listando cursos - ${error.name}: ${error.message}`});
         });
      
 };
@@ -175,6 +259,7 @@ module.exports.subirArchivos = (req, res, next) => {
             data = modulo.ruta_material_didactico
             ruta = modulo.ruta_material_didactico[0].folder
             return uploadImage(req.file.path, ruta, oName)
+            //return uploadVideo(req.file.path, ruta, oName)
         }).then( uploadResponse => {
 
             if(uploadResponse == null){
@@ -195,7 +280,7 @@ module.exports.subirArchivos = (req, res, next) => {
 
             fs.unlink(req.file.path)
             return Modulo.update({ ruta_material_didactico : newArchivo},{
-                where: {id_modulo: id},
+                where: {id_modulo: id_modulo},
                 })
         }).then(updated => {
             if(updated == 0){

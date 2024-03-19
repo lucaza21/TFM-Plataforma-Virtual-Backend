@@ -22,7 +22,16 @@ const uploadFolder = async (folderName, fName) => {
 const uploadImage = async (imagePath, folderName, fName) => {
     return await cloudinary.uploader.upload(imagePath, {
         folder: folderName,
-        public_id : fName
+        public_id : fName,
+        resource_type: "auto"
+    })
+};
+
+const uploadVideo = async (imagePath, folderName, fName) => {
+    return await cloudinary.uploader.explicit(imagePath, {
+        folder: folderName,
+        public_id : fName,
+        resource_type: "auto"
     })
 };
 
@@ -39,4 +48,4 @@ const deleteImage = async(publicId) => {
 
 
   
-module.exports = { uploadFolder, uploadImage, deleteFolder, deleteAllImages, deleteImage }
+module.exports = { uploadFolder, uploadImage, deleteFolder, deleteAllImages, deleteImage, uploadVideo }
