@@ -9,6 +9,7 @@ const upload = multer({ dest: 'uploads/' });
 
 router.get("/listar", actividades.listar_actividad);
 router.post("/crear/:id", actividades.crear_actividad);
+router.get("/detalle/:id", actividades.detalle_actividad);
 router.get("/bulk", actividades.bulk_actividad);
 router.post("/subir/:id", upload.single('file'), actividades.subirArchivos);
 router.put("/editar/:id", actividades.editar_actividad);

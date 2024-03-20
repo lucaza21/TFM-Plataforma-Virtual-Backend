@@ -55,6 +55,51 @@ module.exports.listar_actividad = (req, res, next) => {
      
 };
 
+module.exports.detalle_actividad = (req, res, next) => {
+    //console.log(req.body)
+    const id_actividad = req.params.id
+    Actividad.findOne(
+        { 
+            where: {id_modulo: id_actividad},
+            //attributes:['id_modulo','id_curso','nombre_modulo',], 
+            //raw:true
+            include: [
+                {
+                    model: Modulo,
+                    as:'modulos',
+                    //required:true,
+                    attributes: ["id_modulo","nombre_modulo", "ruta_material_didactico"]
+                },
+                {
+                    model: Entrega,
+                    as:'entrega_actividades',
+                    //required:true,
+                    include:[
+                        {
+                            model:Alumno,
+                            as:'alumno',
+                            attributes: ["nombre","correo", "usuario"]
+                        },
+/*                         {
+                            model: Calificacion,
+                            as: 'calificaciones',
+                        }, */
+                    ]
+                }
+            ],   
+            }
+        ).then(curso => {
+            if(curso === null){
+                throw new Error("El curso mencionado no existe")
+            }
+            
+            return res.status(200).json(curso)
+        }).catch((error) => {
+            return res.status(400).json({message: `Error listando cursos - ${error.name}: ${error.message}`});
+        });
+     
+};
+
 module.exports.crear_actividad = (req, res, next) => {
     //console.log(req.body)
     const id_modulo = req.params.id
@@ -117,7 +162,7 @@ module.exports.crear_actividad = (req, res, next) => {
 };
 
 module.exports.subirArchivos = (req, res, next) => {
-    const id = req.params.id
+    const id_actividad = req.params.id
     if (req.file == null) {
         return res.status(400).json({Error: `Error subiendo el archivo - No se seleccionó ningún archivo. `});
     }
@@ -125,7 +170,7 @@ module.exports.subirArchivos = (req, res, next) => {
     oName = req.file.originalname.split('.')[0]
     Actividad.findOne(
         { 
-            where: {id_actividad: id},
+            where: {id_actividad: id_actividad},
             attributes:['id_actividad','id_modulo', 'nombre_actividad', 'ruta_actividad'],
             raw: true 
         }).then(actividad => {
@@ -148,7 +193,7 @@ module.exports.subirArchivos = (req, res, next) => {
             }]
             fs.unlink(req.file.path)
             return Actividad.update({ ruta_actividad : newArchivo},{
-                where: {id_actividad: id},
+                where: {id_actividad: id_actividad},
                 })
         }).then(updated => {
             if(updated == 0){
@@ -163,10 +208,10 @@ module.exports.subirArchivos = (req, res, next) => {
     };
 
 module.exports.eliminar_actividad = async (req, res, next) => {
-    const id = req.params.id
+    const id_actividad = req.params.id
     Actividad.findOne(
         { 
-            where: {id_actividad: id},
+            where: {id_actividad: id_actividad},
             attributes:['id_actividad','id_modulo', 'nombre_actividad', 'ruta_actividad'],
             raw: true 
         }).then(actividad => {
@@ -180,7 +225,7 @@ module.exports.eliminar_actividad = async (req, res, next) => {
         }).then(response => {
             Actividad.destroy({
                 where: {
-                        id_actividad: id
+                        id_actividad: id_actividad
                         }
                 })
         })
@@ -194,10 +239,10 @@ module.exports.eliminar_actividad = async (req, res, next) => {
 };
 
 module.exports.editar_actividad = (req, res, next) =>{
-    const id = req.params.id;
+    const id_actividad = req.params.id;
     //console.log("TESTING "+ req.body);
     Actividad.update(req.body, {
-        where:{id_actividad: id}
+        where:{id_actividad: id_actividad}
     }).then(value =>{
         if(value == 0){
             return res.status(400).json({message: "No fue posible actualizar la actividad."});

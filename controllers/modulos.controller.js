@@ -93,48 +93,6 @@ module.exports.detalle_modulo = (req, res, next) => {
      
 };
 
-module.exports.detalle_modulo = (req, res, next) => {
-    //console.log(req.body)
-    const id_modulo = req.params.id
-    Modulo.findOne(
-        { 
-            where: {id_modulo: id_modulo},
-            //attributes:['id_modulo','id_curso','nombre_modulo',], 
-            //raw:true
-            include: [
-                {
-                    model: Actividad,
-                    as:'actividades', 
-                    attributes: ["id_actividad","nombre_actividad", "ruta_actividad"] 
-                },
-                {
-                model: catCursos,
-                as:'cat_cursos',
-                required:true,
-                include:[
-                    {
-                        model:CursoAlumno,
-                        as:'curso_alumno'
-                    },
-                    {
-                        model:Alumno,
-                        as: 'alumno'
-                    }
-                ]   
-            }],  
-            }
-        ).then(curso => {
-            if(curso === null){
-                throw new Error("El curso mencionado no existe")
-            }
-            
-            return res.status(200).json(curso)
-        }).catch((error) => {
-            return res.status(400).json({message: `Error listando cursos - ${error.name}: ${error.message}`});
-        });
-     
-};
-
 module.exports.bulk_modulo = (req, res, next) => {
     let bulk = [
         {
